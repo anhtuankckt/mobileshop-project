@@ -1,0 +1,34 @@
+{
+  "name": "mobileshop-project",
+  "version": "1.0.0",
+  "description": "mobileshop-project",
+  "main": "index.js",
+  "scripts": {
+    "production": "node ./src/bin/www.js",
+    "dev": "nodemon ./src/bin/www.js"
+  },
+  "keywords": [],
+  "author": "anhtuankckt",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "config": "^3.3.11",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
+    "express": "^4.18.3",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "mongoose": "^8.2.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "nodemon": "^3.1.0",
+    "passport": "^0.7.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "slug": "^8.2.3",
+    "uuid": "^9.0.1"
+  }
+}

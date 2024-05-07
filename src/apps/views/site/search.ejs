@@ -1,0 +1,59 @@
+<%- include("./layout/head.ejs", {title: "Search"}) -%>
+<%- include("./layout/header.ejs") -%>
+<%- include("./layout/menu.ejs") -%>
+<%- include("./layout/slider.ejs") -%>
+
+<!-- Khi có từ khóa tìm kiếm và có sản phẩm -->
+<% if (products && products.length > 0) { %>
+<!--	List Product	-->
+<div class="products">
+  <div id="search-result">Kết quả tìm kiếm với sản phẩm <span><%=keyword%></span></div>
+  <div class="product-list card-deck">
+    <% if (products) { %>
+    <% for (let product of products) { %>
+    <%- include('./components/productItem.ejs', {item: product}) -%>
+    <% } %>
+    <% } %>
+  </div>
+</div>
+<!--	End List Product	-->
+
+<div id="pagination">
+  <ul class="pagination">
+    <% if (currentPage && currentPage > 1) { %>
+    <li class="page-item"><a class="page-link" href="/search?keyword=<%=keyword%>&page=<%=currentPage - 1%>">Trang trước</a></li>
+    <% } %>
+
+    <% (pages && pages?.forEach((page) => { %>
+    <% if (page === '...') { %>
+    <li class="page-item"><span class="page-link"><%=page%></span></li>
+    <% } else { %>
+    <li class="page-item <%=currentPage == page && 'active'%>"><a class="page-link" href="/search?keyword=<%=keyword%>&page=<%=page%>"><%=page%></a></li>
+    <% } %>
+    <% })) %>
+
+    <% if (currentPage && totalPages && currentPage < totalPages) { %>
+    <li class="page-item"><a class="page-link" href="/search?keyword=<%=keyword%>&page=<%=currentPage + 1%>">Trang sau</a></li>
+    <% } %>
+  </ul>
+</div>
+<% } %>
+
+<!-- Khi có từ khóa nhưng không có sản phẩm -->
+<% if (products && products.length < 1 && keyword) { %>
+<div class="products">
+  <div id="search-result">Không có kết quả phù hợp với từ khóa <span><%=keyword%></span> !
+  </div>
+</div>
+<% } %>
+
+<!-- Khi để trống từ khóa tìm kiếm -->
+<% if (products && products.length < 1 && !keyword) { %>
+<div class="products">
+  <div id="search-result" class="text-warning">Không có kết quả phù hợp do không nhập từ khóa tìm kiếm!
+  </div>
+</div>
+<% } %>
+
+<%- include("./layout/sidebar.ejs") -%>
+<%- include("./layout/footer.ejs") -%>

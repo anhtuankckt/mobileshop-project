@@ -1,0 +1,175 @@
+<%- include("../../layout/head.ejs", {title: "MobileShop - Ads-Banner" }) -%>
+<%- include("../../layout/header.ejs") -%>
+<%- include("../../layout/sidebar.ejs") -%>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+  <div class="row">
+    <ol class="breadcrumb">
+      <li><a href="/admin/advertises/banners"><svg class="glyph stroked home">
+            <use xlink:href="#stroked-home"></use>
+          </svg></a></li>
+      <li class="active">Quản lí quảng cáo</li>
+    </ol>
+  </div>
+  <!--/.row-->
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Danh sách banner</h1>
+    </div>
+  </div>
+  <!--/.row-->
+
+  <div style="margin-bottom: 10px;" class="row">
+    <div style="margin-left: 15px;">
+      <a href="/admin/advertises/sliders" class="btn btn-warning">
+        DANH SÁCH SLIDER
+      </a>
+      <a href="/admin/advertises/banners" class="btn btn-warning">
+        DANH SÁCH BANNER
+      </a>
+    </div>
+  </div>
+  <!-- /.row -->
+
+  <div id="toolbar" class="btn-group">
+    <% if (role === 'admin') { %>
+    <a href="/admin/advertises/banners/create" class="btn btn-success">
+      <i class="glyphicon glyphicon-plus"></i> Thêm banner
+    </a>
+    <% } else { %>
+    <span class="btn btn-primary">Bạn chỉ được xem danh sách</span>
+    <% } %>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <% if (banners && banners.length > 0) { %>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <table data-toolbar="#toolbar" data-toggle="table">
+            <thead>
+              <tr>
+                <th data-field="id" data-sortable="true">STT</th>
+                <th>Tên nhóm banner</th>
+                <th>Ảnh banner</th>
+                <th>Ngày tạo</th>
+                <th>Hiển thị</th>
+                <% if (role === 'admin') { %>
+                <th>Hành động</th>
+                <th>Chọn</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% let i = 1 %>
+              <% for (let banner of banners) { %>
+              <tr>
+                <td><%=i%></td>
+                <td><%=banner?.name%></td>
+                <td class="form-group">
+                  <% for (let i of banner?.thumbnails) { %>
+                  <img style="max-width: 300px; max-height: 80px; padding: 5px;" src="../uploads/images/banners/<%=i%>" />
+                  <% } %>
+                </td>
+                <td><%=timesAgo(banner?.createdAt)%></td>
+                <td>
+                  <% if (banner?.allow) { %>
+                  <span class="btn btn-success">Đang hiển thị</i></a>
+                    <% } else { %>
+                    <span class="btn btn-warning">Không hiển thị</i></a>
+                      <% } %>
+                </td>
+                <% if (role === 'admin') { %>
+                <td class=" form-group">
+                  <% if (banner?.allow) { %>
+                  <a style="margin-top: 3px;" href="/admin/advertises/banners/off/<%=banner?._id%>" class="btn btn-danger">Tắt hiển thị</i></a>
+                  <% } else { %>
+                  <a href="/admin/advertises/banners/approve/<%=banner?._id%>" class="btn btn-warning">Cho phép</i></a>
+                  <% } %>
+                  <a onClick="clickDelete('<%=banner?._id%>')" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                </td>
+                <td>
+                  <input class="select-checkbox" style="cursor: pointer;" name="idsBanner[]" type="checkbox" value="<%=banner?._id%>" />
+                </td>
+                <% } %>
+              </tr>
+              <% i++ %>
+              <%} %>
+            </tbody>
+          </table>
+          <% if (role === 'admin') { %>
+          <div style="display: flex; justify-content: end; margin-top: 10px;">
+            <a style="margin-right: 5px;" onclick="clickDeleteChecked()" class="btn btn-danger">Xóa các ô đã chọn</a>
+            <a onclick="selectAllCheckbox()" class="btn btn-warning">Chọn tất cả</a>
+          </div>
+          <% } %>
+        </div>
+        <div class="panel-footer">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <% if (currentPage > 1) { %>
+              <li class="page-item"><a class="page-link" href="/admin/advertises/banner?page=<%=currentPage - 1%>">&laquo;</a></li>
+              <% } %>
+
+              <% pages && pages?.forEach((page) => { %>
+              <% if (page === '...') { %>
+              <li class="page-item"><span class="page-link"><%=page%></span></li>
+              <%} else {%>
+              <li class="page-item <%=currentPage == page ? 'active' : ''%>"><a class="page-link" href="/admin/advertises/banner?page=<%=page%>"><%=page%></a></li>
+              <% } %>
+              <%}) %>
+
+
+              <% if (currentPage < totalPages ) {%>
+              <li class="page-item"><a class="page-link" href="/admin/advertises/banner?page=<%=currentPage + 1%>">&raquo;</a></li>
+              <%} %>
+          </nav>
+        </div>
+      </div>
+      <% } else { %>
+      <div style="margin-top: 10px;" class="panel panel-default">
+        <div class="panel-body">
+          <span class="text-danger">Chưa có banner nào. Hãy thêm mới..</span>
+        </div>
+      </div>
+      <% } %>
+      <!--  -->
+    </div>
+  </div>
+  <!--/.row-->
+</div>
+<!--/.main-->
+
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-table.js"></script>
+
+<script>
+  function handleConfirm(id, action) {
+    const isConfirm = confirm(`Bạn có chắc chắn ${action} không?`)
+    const link = () => window.location.href = `/admin/advertises/banners/${action}/${id}`
+    return isConfirm ? link() : false
+  }
+  const clickDelete = (id) => handleConfirm(id, 'delete')
+</script>
+
+<%- include('../../common/allCheckedbox.ejs') -%>
+
+<script>
+  function handleChecked(action) {
+    const allCheckedbox = document.querySelectorAll('.select-checkbox:checked')
+    const arrIdsValue = Array.from(allCheckedbox).map(i => i.value)
+    const strIdsValue = arrIdsValue.join(',')
+    if (!strIdsValue) {
+      alert('Bạn chưa chọn ô nào!')
+      return false
+    } else {
+      const isConfirm = confirm(`Bạn có muốn ${action} các sản phẩm đã chọn không?`)
+      const link = () => window.location.href = `/admin/advertises/banners/${action}/${strIdsValue}`
+      return isConfirm ? link() : false
+    }
+  }
+  const clickDeleteChecked = () => handleChecked('delete')
+</script>
+
+<%- include("../../layout/footer.ejs") -%>

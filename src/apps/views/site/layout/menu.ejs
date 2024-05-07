@@ -1,0 +1,37 @@
+<!--	Body	-->
+<div id="body">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <nav>
+          <div id="menu" class="collapse navbar-collapse">
+            <ul>
+              <% if (categories && categories.length > 0) { %>
+              <% const dequyCat = (data, parrentId, index = 1) => { %>
+              <% data.map(i => { %>
+              <% if (i.cat_parrent?._id.toString() === parrentId) { %>
+              <li class="menu-item">
+                <% if (index > 2) { %>
+                <a href="/category/<%=i._id%>"><%=i.title%></a>
+                <% } else { %>
+                <span><%=i.title%></span>
+                <% } %>
+                <ul><% dequyCat(data, i._id.toString(), index + 1) %></ul>
+              </li>
+              <% } %>
+              <% }) %>
+              <% } %>
+              <% dequyCat(categories) %>
+              <% } else { %>
+              <li class="menu-item"><span>iPhone</span></li>
+              <li class="menu-item"><span>Samsung</span></li>
+              <li class="menu-item"><span>HTC</span></li>
+              <li class="menu-item"><span>Nokia</span></li>
+              <li class="menu-item"><span>Sony</span></li>
+              <li class="menu-item"><span>Blackberry</span></li>
+              <% } %>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>

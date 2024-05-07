@@ -1,0 +1,80 @@
+<%- include("../layout/head.ejs", {title: "MobileShop - AddCategory" }) -%>
+<%- include("../layout/header.ejs") -%>
+<%- include("../layout/sidebar.ejs") -%>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+  <div class="row">
+    <ol class="breadcrumb">
+      <li><a href="#"><svg class="glyph stroked home">
+            <use xlink:href="#stroked-home"></use>
+          </svg></a></li>
+      <li><a href="/admin/categories">Quản lý danh mục</a></li>
+      <li class="active">Sửa danh mục</li>
+    </ol>
+  </div>
+  <!--/.row-->
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Sửa danh mục</h1>
+    </div>
+  </div>
+  <!--/.row-->
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="col-md-8">
+            <% if (data && data.error) { %>
+            <div class="alert alert-danger"><%=data.error%></div>
+            <% } %>
+            <form role="form" method="post">
+              <div class="form-group">
+                <div>
+                  <p><b>THÔNG TIN DANH MỤC HIỆN TẠI:</b></p>
+                  <p><b>Tên danh mục: </b><span><%=currentCategory?.title%></span></p>
+                  <p><b>Danh mục cha: </b>
+                    <span>
+                      <%=currentCategory?.cat_parrent === null ? "Đang là danh mục gốc" : currentCategory?.cat_parrent.title %>
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <p><b>THAY ĐỔI THÀNH:</b></p>
+                  <% if (currentCategory?.cat_parrent !== null) { %>
+                  <label>Danh mục cha:</label>
+                  <select name="cat_parrent" class="form-control" style="margin-bottom: 10px;">
+                    <option value="khong">Không</option>
+                    <% if (categories) { %>
+                    <% const catId = currentCategory.cat_parrent?._id.toString() %>
+                    <% const dequy = (data, parrentId, level = 0) => { %>
+                    <% data.map(i => { %>
+                    <% if (i.cat_parrent?._id.toString() === parrentId) { %>
+                    <% const prefix = '--'.repeat(level) %>
+                    <option <%= catId == i?.id.toString() && 'selected'%> value="<%=i?.id%>"><%=prefix%> <%=i?.title%></option>
+                    <% dequy(data, i._id.toString(), level + 1) %>
+                    <% } %>
+                    <% }) %>
+                    <% } %>
+                    <% dequy(categories) %>
+
+
+
+                    <% } %>
+                  </select>
+                  <% } %>
+                  <label>Tên danh mục mới:</label>
+                  <input required type="text" name="title" class="form-control" placeholder="Tên danh mục...">
+                </div>
+              </div>
+              <button type="submit" name="sbm" class="btn btn-success">Sửa</button>
+              <button type="reset" class="btn btn-default">Làm mới</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div><!-- /.col-->
+  </div>
+  <!--/.main-->
+
+  <%- include("../layout/footer.ejs") -%>

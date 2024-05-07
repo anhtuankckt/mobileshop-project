@@ -1,0 +1,174 @@
+<%- include("../layout/head.ejs", {title: "MobileShop - Orders" }) -%>
+<%- include("../layout/header.ejs") -%>
+<%- include("../layout/sidebar.ejs") -%>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+  <div class="row">
+    <ol class="breadcrumb">
+      <li><a href="/admin/orders"><svg class="glyph stroked home">
+            <use xlink:href="#stroked-home"></use>
+          </svg></a></li>
+      <li class="active">Danh sách đơn hàng</li>
+    </ol>
+  </div>
+  <!--/.row-->
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Danh sách đơn hàng</h1>
+    </div>
+  </div>
+  <!--/.row-->
+  <div class="row">
+    <div class="col-lg-12">
+      <% if (orders && orders.length > 0) {%>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <table id="order-css" data-toolbar="#toolbar" data-toggle="table">
+            <thead>
+              <tr>
+                <th data-field="id" data-sortable="true">STT</th>
+                <th data-field="name" data-sortable="true">Thông tin khách hàng</th>
+                <th data-field="price" data-sortable="true">Nội dung đơn hàng</th>
+                <th>Đơn hàng xác nhận</th>
+                <th>Hành động</th>
+                <th>Chọn</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% let index = 1 %>
+              <% for (let order of orders) { %>
+              <tr>
+                <td><%=index%></td>
+                <td class="customer-info">
+                  <li><b>Name:</b> <%=order?.customer_id?.username%></li>
+                  <li><b>Email:</b> <%=order?.customer_id?.email%></li>
+                  <li><b>Phone:</b> <%=order?.customer_id?.phone%></li>
+                  <li><b>Address:</b> <%=order?.customer_id?.address%></li>
+                </td>
+                <td class="order-info">
+                  <% order.items?.map((item, index) => { %>
+                  <div>
+                    <li>Sản phẩm <%=index + 1%></li>
+                    <li><b>Tên sản phẩm:</b> <%=item?.prd_id?.name%></li>
+                    <li><b>Ảnh sản phẩm:</b>
+                      <% for (let i of item?.prd_id?.thumbnails) { %>
+                      <img style="width: 40px; height: 40px;" src="../uploads/images/<%=i%>" alt="">
+                      <% } %>
+                    </li>
+                    <li><b>Số lượng:</b> <%=item?.qty%></li>
+                    <li><b>Đơn giá:</b> <%=vndPrice(item?.price)%>đ</li>
+                    <li><b>Tổng tiền sản phẩm:</b> <%=vndPrice(item?.price * item?.qty)%>đ</li>
+                  </div>
+                  <% }) %>
+                  <li><b>Tổng giá trị đơn hàng: <span><%=vndPrice(order?.items?.reduce((total, item) => total + item?.qty * item?.price, 0))%>đ</span></b></li>
+                </td>
+                <td>
+                  <% if (order.confirmed) { %>
+                  <span class="btn btn-success">Đã xác nhận</span>
+                  <% } else { %>
+                  <span class="btn btn-warning ">Chờ xác nhận</span>
+                  <%  } %>
+                </td>
+                <td class=" form-group">
+                  <% if (!order.confirmed) { %>
+                  <a onclick="clickConfirm('<%=order?._id%>')" class="btn btn-primary">Xác nhận đơn hàng</a>
+                  <% } %>
+                  <a onclick="clickDelete('<%=order?._id%>')" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                </td>
+                <td>
+                  <input class="select-checkbox" style="cursor: pointer;" name="ids[]" type="checkbox" value="<%=order?._id%>" />
+                </td>
+              </tr>
+              <% index++ %>
+              <% } %>
+            </tbody>
+          </table>
+          <div style="display: flex; justify-content: end; margin-top: 10px;">
+            <a onclick="clickConfirmChecked()" class="btn btn-primary" style="margin-right: 5px;">Xác nhận các ô đã chọn</a>
+            <a onclick="clickDeleteChecked()" class="btn btn-danger" style="margin-right: 5px;">Xóa các ô đã chọn</a>
+            <a onclick="selectAllCheckbox()" class="btn btn-warning">Chọn tất cả</a>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <div class="btn-group">
+            <a href="/admin/orders/trash" class="btn btn-info">
+              <i class="glyphicon glyphicon-trash"></i> Sản phẩm đã xóa
+            </a>
+          </div>
+
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <% if (currentPage > 1) { %>
+              <li class="page-item"><a class="page-link" href="/admin/orders?page=<%=currentPage - 1%>">&laquo;</a></li>
+              <% } %>
+
+              <% pages?.forEach((page) => { %>
+              <% if (page === '...') { %>
+              <li class="page-item"><span class="page-link"><%=page%></span></li>
+              <%} else {%>
+              <li class="page-item <%=currentPage == page ? 'active' : ''%>"><a class="page-link" href="/admin/orders?page=<%=page%>"><%=page%></a></li>
+              <% } %>
+              <%}) %>
+
+              <% if (currentPage < totalPages ) {%>
+              <li class="page-item"><a class="page-link" href="/admin/orders?page=<%=currentPage + 1%>">&raquo;</a></li>
+              <%} %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <% } else { %>
+      <div style="margin-top: 10px;" class="panel panel-default">
+        <div class="panel-body">
+          <span class="text-danger">Chưa có đơn hàng.. </span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <a href="/admin/orders/trash" class="btn btn-info">
+          <i class="glyphicon glyphicon-trash"></i> Sản phẩm đã xóa
+        </a>
+      </div>
+      <% } %>
+      <!--  -->
+    </div>
+  </div>
+  <!--/.row-->
+</div>
+<!--/.main-->
+
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-table.js"></script>
+
+<script>
+  function handleConfirm(id, action) {
+    const isConfirm = confirm(`Bạn có chắc chắn ${action} không?`)
+    const link = () => window.location.href = `/admin/orders/${action}/${id}`
+    return isConfirm ? link() : false
+  }
+  const clickConfirm = (id) => handleConfirm(id, 'confirm')
+  const clickDelete = (id) => handleConfirm(id, 'delete')
+</script>
+
+<%- include('../common/allCheckedbox.ejs') -%>
+
+<script>
+  function handleChecked(action) {
+    const allCheckedbox = document.querySelectorAll('.select-checkbox:checked')
+    const arrIdsValue = Array.from(allCheckedbox).map(i => i.value)
+    const strIdsValue = arrIdsValue.join(',')
+    if (!strIdsValue) {
+      alert('Bạn chưa chọn ô nào!')
+      return false
+    } else {
+      const isConfirm = confirm(`Bạn có muốn ${action} các sản phẩm đã chọn không?`)
+      const link = () => window.location.href = `/admin/orders/${action}/${strIdsValue}`
+      return isConfirm ? link() : false
+    }
+  }
+  const clickConfirmChecked = () => handleChecked('confirm')
+  const clickDeleteChecked = () => handleChecked('delete')
+</script>
+
+<%- include("../layout/footer.ejs") -%>

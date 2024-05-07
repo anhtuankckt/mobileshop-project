@@ -1,0 +1,96 @@
+<body>
+
+  <!--	Header	-->
+  <div id="header">
+    <div class="container">
+      <div class="row">
+        <div id="logo" class="col-lg-3 col-md-3 col-sm-12" style="overflow: hidden;">
+          <% if (configs) { %>
+          <h1><a href="/"><img class="img-fluid" src="../uploads/images/logo/<%=configs?.logo_header%>"></a></h1>
+          <% } else { %>
+          <h1><a href="/"><img class="img-fluid" src="images/logo.png"></a></h1>
+          <% } %>
+        </div>
+        <div id="search" class="col-lg-5 col-md-5 col-sm-12">
+          <form id="formSearch" action="/search" class="form-inline">
+            <input name="keyword" class="form-control mt-3" type="search" placeholder="Tìm kiếm" aria-label="Search">
+            <div class="suggest-box">
+              <li>keyword 1</li>
+              <li>keyword 2</li>
+              <li>keyword 3</li>
+            </div>
+            <button class="btn btn-danger mt-3" type="submit">Tìm kiếm</button>
+          </form>
+        </div>
+        <div id="header-customer" class="col-lg-2 col-md-2 col-sm-12">
+          <div>
+            <% if (customer) { %>
+            <a class="text-primary" href="/success/list/<%=customer?._id%>"><%=customer?.username%></a>
+            <a class="text-danger" href="/logout">Đăng xuất</a>
+            <% } else { %>
+            <a class="text-primary" href="/signin">đăng nhập</a>
+            <a class="text-danger" href="/signup">đăng kí</a>
+            <% } %>
+          </div>
+        </div>
+        <div id="cart" class="col-lg-2 col-md-2 col-sm-12" style="padding-right: 10px;">
+          <a class="mt-4 mr-2" href="/cart">giỏ hàng</a><span class="mt-3"><%=totalCartItems%></span>
+        </div>
+      </div>
+    </div>
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler navbar-light" type="button" data-toggle="collapse" data-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div>
+  <!--	End Header	-->
+
+  <script>
+    const formSearch = document.getElementById('formSearch')
+    const inputKeyword = document.querySelector('[name="keyword"]')
+    const suggestBox = document.querySelector('.suggest-box')
+
+    let dataSuggest = []
+    inputKeyword.onkeyup = (e) => {
+      const keyword = e.target.value.trim()
+      if (keyword) {
+        // call Api
+        $.ajax({
+          url: '/search/name-products',
+          method: 'GET',
+          success: function(response) {
+            const nameProducts = response.nameProducts
+            dataSuggest = nameProducts.filter((data) => {
+              return data.toLocaleLowerCase().includes(keyword)
+            }).slice(0, 3)
+            dataSuggest = dataSuggest.map((data) => {
+              return data = `<li>${data}</li>`
+            })
+          }
+        })
+        showSuggestions(dataSuggest)
+        formSearch.classList.add('active')
+        let allList = suggestBox.querySelectorAll('li')
+        for (let i = 0; i < allList.length; i++) {
+          allList[i].setAttribute('onclick', 'select(this)')
+        }
+      } else {
+        formSearch.classList.remove('active')
+      }
+    }
+
+    function select(element) {
+      inputKeyword.value = element.textContent
+      formSearch.classList.remove('active')
+    }
+
+    function showSuggestions(list) {
+      let listData
+      if (!list.length) {
+        listData = `<li>${inputKeyword.value}</li>`
+      } else {
+        listData = list.join('')
+      }
+      suggestBox.innerHTML = listData
+    }
+  </script>

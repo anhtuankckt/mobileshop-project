@@ -1,0 +1,177 @@
+<%- include("../layout/head.ejs", {title: "MobileShop - Configs" }) -%>
+<%- include("../layout/header.ejs") -%>
+<%- include("../layout/sidebar.ejs") -%>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+  <div class="row">
+    <ol class="breadcrumb">
+      <li><a href="#"><svg class="glyph stroked home">
+            <use xlink:href="#stroked-home"></use>
+          </svg></a></li>
+      <li class="active">Danh sách cấu hình</li>
+    </ol>
+  </div>
+  <!--/.row-->
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Danh sách cấu hình</h1>
+    </div>
+  </div>
+  <!--/.row-->
+  <div id="toolbar" class="btn-group">
+    <% if (role === 'admin') { %>
+    <a href="/admin/configs/create" class="btn btn-success">
+      <i class="glyphicon glyphicon-plus"></i> Thêm cấu hình
+    </a>
+    <% } else { %>
+    <span class="btn btn-primary">Bạn chỉ được xem danh sách</span>
+    <% } %>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <% if (configs && configs.length > 0) { %>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <table data-toolbar="#toolbar" data-toggle="table">
+            <thead>
+              <tr>
+                <th data-field="id" data-sortable="true">STT</th>
+                <th>Logo header</th>
+                <th>Logo footer</th>
+                <th data-field="name" data-sortable="true">Giới thiệu</th>
+                <th data-field="price" data-sortable="true">Địa chỉ</th>
+                <th>Dịch vụ</th>
+                <th>Hotline</th>
+                <th>Hiển thị</th>
+                <% if (role === 'admin') { %>
+                <th>Hành động</th>
+                <th>Chọn</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% let i = 1 %>
+              <% for (let config of configs) { %>
+              <tr>
+                <td><%=i%></td>
+                <td style="text-align: center"><img width="210" height="38" src="../uploads/images/logo/<%=config?.logo_header%>" /></td>
+                <td style="text-align: center"><img width="210" height="38" src="../uploads/images/logo/<%=config?.logo_footer%>" /></td>
+                <td><%=config?.intro%></td>
+                <td><%=config?.address%></td>
+                <td><%=config?.service%></td>
+                <td class=" form-group">
+                  <p><%=config?.hotline_phone%></p>
+                  <p><%=config?.hotline_email%></p>
+                </td>
+                <td>
+                  <% if (config?.allow) { %>
+                  <span class="btn btn-success">Đang hiển thị</i></a>
+                    <% } else { %>
+                    <span class="btn btn-warning">Không hiển thị</i></a>
+                      <% } %>
+                </td>
+                <% if (role === 'admin') { %>
+                <td class="form-group">
+                  <% if (config?.allow) { %>
+                  <a href="/admin/configs/hidden/<%=config?._id%>" class="btn btn-danger">Tắt</i></a>
+                  <% } else { %>
+                  <a href="/admin/configs/approve/<%=config?._id%>" class="btn btn-warning">Cho phép</i></a>
+                  <% } %>
+                  <a onclick="clickEdit('<%=config?._id%>')" class="btn btn-primary"><i class="glyphicon glyphicon-pencil"></i></a>
+                  <a onclick="clickDelete('<%=config?._id%>')" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                </td>
+                <td>
+                  <input class="select-checkbox" style="cursor: pointer;" name="cfchecked[]" type="checkbox" value="<%=config?._id%>" />
+                </td>
+                <% } %>
+              </tr>
+              <%i++%>
+              <%} %>
+            </tbody>
+          </table>
+          <% if (role === 'admin') { %>
+          <div style="display: flex; justify-content: end; margin-top: 10px;">
+            <a onclick="clickDeleteChecked()" class="btn btn-danger" style="margin-right: 5px;">Xóa các ô đã chọn</a>
+            <a onclick="selectAllCheckbox()" class="btn btn-warning">Chọn tất cả</a>
+          </div>
+          <% } %>
+        </div>
+
+        <div class="panel-footer">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <% if (currentPage > 1) { %>
+              <li class="page-item"><a class="page-link" href="/admin/configs?page=<%=currentPage - 1%>">&laquo;</a></li>
+              <% } %>
+
+              <% pages && pages?.forEach((page) => { %>
+              <% if (page === '...') { %>
+              <li class="page-item"><span class="page-link"><%=page%></span></li>
+              <%} else {%>
+              <li class="page-item <%=currentPage == page ? 'active' : ''%>"><a class="page-link" href="/admin/configs?page=<%=page%>"><%=page%></a></li>
+              <% } %>
+              <%}) %>
+
+
+              <% if (currentPage < totalPages ) {%>
+              <li class="page-item"><a class="page-link" href="/admin/configs?page=<%=currentPage + 1%>">&raquo;</a></li>
+              <%} %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <% } else { %>
+      <div style="margin-top: 10px;" class="panel panel-default">
+        <div class="panel-body">
+          <span class="text-danger">Chưa có cấu hình nào. Hãy thêm mới..</span>
+        </div>
+      </div>
+      <% } %>
+      <!--  -->
+    </div>
+  </div>
+  <!--/.row-->
+</div>
+<!--/.main-->
+
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-table.js"></script>
+
+<script>
+  function handleConfirm(id, action) {
+    const isConfirm = confirm(`Bạn có chắc chắn ${action} không?`)
+    const link = () => window.location.href = `/admin/configs/${action}/${id}`
+    return isConfirm ? link() : false
+  }
+  const clickDelete = (id) => handleConfirm(id, 'delete')
+  const clickEdit = (id) => handleConfirm(id, 'edit')
+</script>
+
+<script>
+  function selectAllCheckbox() {
+    const allCheckbox = document.querySelectorAll('.select-checkbox')
+    allCheckbox.forEach(select => select.checked = !select.checked)
+  }
+</script>
+
+<script>
+  function handleChecked(action) {
+    const allCheckedbox = document.querySelectorAll('.select-checkbox:checked')
+    const arrIdsValue = Array.from(allCheckedbox).map(i => i.value)
+    const strIdsValue = arrIdsValue.join(',')
+    if (!strIdsValue) {
+      alert('Bạn chưa chọn ô nào!')
+      return false
+    } else {
+      const isConfirm = confirm(`Bạn có muốn ${action} các sản phẩm đã chọn không?`)
+      const link = () => window.location.href = `/admin/configs/${action}/${strIdsValue}`
+      return isConfirm ? link() : false
+    }
+  }
+  const clickDeleteChecked = () => handleChecked('delete')
+</script>
+
+
+<%- include("../layout/footer.ejs") -%>

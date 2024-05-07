@@ -1,0 +1,91 @@
+<%- include("./layout/head.ejs", {title: "Cart"}) -%>
+<%- include("./layout/header.ejs") -%>
+<%- include("./layout/menu.ejs") -%>
+<%- include("./layout/slider.ejs") -%>
+
+<!--	Cart	-->
+<% if (items && items.length > 0) { %>
+<div id="my-cart">
+  <div class="row">
+    <div class="cart-nav-item col-lg-7 col-md-7 col-sm-12">Thông tin sản phẩm</div>
+    <div class="cart-nav-item col-lg-2 col-md-2 col-sm-12">Tùy chọn</div>
+    <div class="cart-nav-item col-lg-3 col-md-3 col-sm-12">Giá</div>
+  </div>
+  <form method="post" action="/update-cart">
+    <% for (let item of items) { %>
+    <div class="cart-item row">
+      <div class="cart-thumb col-lg-7 col-md-7 col-sm-12">
+        <img src="../uploads/images/<%=item?.thumbnails[0]%>">
+        <h4><%=item?.name%></h4>
+      </div>
+
+      <div class="cart-quantity col-lg-2 col-md-2 col-sm-12">
+        <input name="products[<%=item.id%>][qty]" type="number" id="quantity" class="form-control form-blue quantity" value="<%=item?.qty%>" min="1">
+      </div>
+      <div class="cart-price col-lg-3 col-md-3 col-sm-12"><b><%=vndPrice(item?.price * item?.qty)%>VND</b><a href="/del-cart/<%=item?.id%>">Xóa</a></div>
+    </div>
+    <% } %>
+
+    <div class="row">
+      <div class="cart-thumb col-lg-7 col-md-7 col-sm-12">
+        <button id="update-cart" class="btn btn-success" type="submit" name="sbm">Cập nhật giỏ hàng</button>
+      </div>
+      <div class="cart-total col-lg-2 col-md-2 col-sm-12"><b>Tổng cộng:</b></div>
+      <div class="cart-price col-lg-3 col-md-3 col-sm-12"><b><%=vndPrice(totalPriceCart)%>VND</b></div>
+    </div>
+  </form>
+</div>
+
+<!--	End Cart	-->
+
+<!--	Customer Info	-->
+<div id="customer">
+  <div class="row">
+    <div class="by-now col-lg-6 col-md-6 col-sm-12">
+      <% if (customer) { %>
+      <button onClick="orderConfirm('<%=customer._id%>')" class="btn btn-danger">
+        <b>Mua ngay</b>
+        <span>Giao hàng tận nơi siêu tốc</span>
+      </button>
+      <% } else { %>
+      <button onClick="orderConfirm()" class="btn btn-danger">
+        <b>Mua ngay</b>
+        <span>Giao hàng tận nơi siêu tốc</span>
+      </button>
+      <% } %>
+    </div>
+    <div class="by-now col-lg-6 col-md-6 col-sm-12">
+      <button type="button" class="btn btn-primary" style="cursor: default;">
+        <b>Trả góp Online</b>
+        <span>Vui lòng call (+84) 0988 550 553</span>
+      </button>
+    </div>
+  </div>
+</div>
+<!--	End Customer Info	-->
+
+<% } else { %>
+<div id="my-cart">
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <p><b>Chưa có sản phẩm trong giỏ hàng!</b></p>
+      <b>Để xem thêm các sản phẩm cần mua, vui lòng bấm <a href="/">vào đây</a></b>
+    </div>
+
+  </div>
+</div>
+<% } %>
+
+<script>
+  function orderConfirm(id) {
+    if (id) {
+      return window.location.href = `/order/${id}`
+    } else {
+      alert('Cần phải đăng nhập để mua hàng!')
+      return window.location.href = `/signin`
+    }
+  }
+</script>
+
+<%- include("./layout/sidebar.ejs") -%>
+<%- include("./layout/footer.ejs") -%>

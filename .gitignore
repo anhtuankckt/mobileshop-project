@@ -1,0 +1,7 @@
+# dependences
+/node_modules
+.env
+/src/tmp
+
+# production
+/build

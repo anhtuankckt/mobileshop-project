@@ -1,0 +1,16 @@
+<script>
+  function selectAllCheckbox() {
+    const allCheckbox = document.querySelectorAll('.select-checkbox')
+    let allChecked = true
+    allCheckbox.forEach(select => {
+      if (!select.checked) {
+        allChecked = false
+      }
+    })
+    if (allChecked) {
+      allCheckbox.forEach(select => select.checked = false)
+    } else {
+      allCheckbox.forEach(select => select.checked = true)
+    }
+  }
+</script>

@@ -29,29 +29,7 @@ const index = async (req, res) => {
   const totalRows = await productModel.find(query).countDocuments()
   const totalPages = Math.ceil(totalRows / limit)
 
-  const allCategories = await categoryModel.find({ is_delete: false })
-
-  let arrCat = []
-  const dequy = (data, parrentId, index = 1) => {
-    data.forEach(i => {
-      if (i.cat_parrent?._id.toString() === parrentId) {
-        if (index >= 3) {
-          arrCat.push(i._id.toString())
-        }
-        dequy(data, i._id.toString(), index + 1)
-      }
-    })
-  }
-  dequy(allCategories)
-
-  const categories = await categoryModel.find({ _id: { $in: arrCat } })
-
-  categories.push({ title: 'Tất cả', slug: 'allProduct', id: '123' })
-  categories.sort((a, b) => {
-    if (a.slug === 'allProduct') { return -1 }
-    if (b.slug === 'allProduct') { return 1 }
-    return 0
-  })
+  const categories = await categoryModel.find({ is_delete: false }).populate('cat_parrent')
 
   const user = await userModel.findOne({ email: req.session.email })
   const role = user?.role

@@ -34,10 +34,21 @@
     <b style="margin-right: 5px;">Filter:</b>
     <div>
       <select onChange="changeFilter(this)" class="form-control">
+        <option value="123">Tất cả</option>
         <% if (categories && categories.length > 0) { %>
-        <% for (let category of categories) {%>
-        <option value="<%=category?.id%>" <%=currentFilterCat == category?.id && 'selected'%>><%=category?.title%></option>
+        <% const dequy = (data, parrentId, index = -2) => { %>
+        <% let prefix %>
+        <% if (index >= 0) { prefix = '--'.repeat(index)} %>
+        <% data.map(i => { %>
+        <% if (i.cat_parrent?._id.toString() === parrentId) { %>
+        <% if (index >= 0) { %>
+        <option value="<%=i?.id%>" <%=currentFilterCat == i?.id && 'selected'%>><%=prefix%> <%=i?.title%></option>
         <% } %>
+        <% dequy(data, i._id.toString(), index + 1) %>
+        <% } %>
+        <% }) %>
+        <% } %>
+        <% dequy(categories) %>
         <% } %>
       </select>
     </div>

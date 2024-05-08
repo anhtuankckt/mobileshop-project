@@ -71,23 +71,15 @@
               <label>Danh mục</label>
               <select name="cat_id" class="form-control">
                 <% if (categories && categories.length > 0) { %>
-                <% const dequyCat = (data, parrentId, index = 1, indexNew = -2) => { %>
+                <% const dequyCat = (data, parrentId, index = -2) => { %>
                 <% let prefix %>
-                <% if (indexNew >= 0) { %>
-                <% prefix = '--'.repeat(indexNew) %>
-                <% } %>
+                <% if (index >= 0) { prefix = '--'.repeat(index) } %>
                 <% data.forEach(i => { %>
                 <% if (i.cat_parrent?._id.toString() === parrentId) { %>
-                <% if (index > 2) { %>
-                <option value="<%= i.id %>">
-                  <% if (prefix) { %>
-                  <%=prefix%> <%= i.title %>
-                  <% } else { %>
-                  <%= i.title %>
-                  <% } %>
-                </option>
+                <% if (index >= 0) { %>
+                <option value="<%= i.id %>"><%=prefix%> <%= i.title %></option>
                 <% } %>
-                <% dequyCat(data, i._id.toString(), index + 1, indexNew + 1) %>
+                <% dequyCat(data, i._id.toString(), index + 1) %>
                 <% } %>
                 <% }) %>
                 <% } %>

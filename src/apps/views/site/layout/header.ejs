@@ -11,7 +11,7 @@
           <h1><a href="/"><img class="img-fluid" src="images/logo.png"></a></h1>
           <% } %>
         </div>
-        <div id="search" class="col-lg-5 col-md-5 col-sm-12">
+        <div id="search" class="col-lg-4 col-md-4 col-sm-12">
           <form id="formSearch" action="/search" class="form-inline">
             <input name="keyword" class="form-control mt-3" type="search" placeholder="Tìm kiếm" aria-label="Search">
             <div class="suggest-box">
@@ -19,13 +19,13 @@
               <li>keyword 2</li>
               <li>keyword 3</li>
             </div>
-            <button class="btn btn-danger mt-3" type="submit">Tìm kiếm</button>
+            <button class="btn mt-3" type="submit">Tìm kiếm</button>
           </form>
         </div>
-        <div id="header-customer" class="col-lg-2 col-md-2 col-sm-12">
+        <div id="header-customer" class="col-lg-3 col-md-3 col-sm-12">
           <div>
             <% if (customer) { %>
-            <a class="text-primary" href="/success/list/<%=customer?._id%>"><%=customer?.username%></a>
+            <a class="text-primary" href="/success/list/<%=customer?._id%>"><%=customer?.username.length <= 8 ? customer?.username : customer?.username.slice(0, 8) + ('...')%></a>
             <a class="text-danger" href="/logout">Đăng xuất</a>
             <% } else { %>
             <a class="text-primary" href="/signin">đăng nhập</a>

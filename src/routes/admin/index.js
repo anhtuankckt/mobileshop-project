@@ -9,6 +9,10 @@ const configRoute = require('./configRoute')
 const advertiseRoute = require('./advertiseRoute')
 const orderRoute = require('./orderRoute')
 const authMiddleware = require('../../apps/middlewares/authMiddleware')
+const adminShareMiddleware = require('../../apps/middlewares/adminShareMiddleware')
+
+// use share middeware
+router.use(adminShareMiddleware)
 
 // admin
 router.use('/', authRoute)

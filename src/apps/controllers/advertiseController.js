@@ -46,7 +46,7 @@ const storeSlider = async (req, res) => {
 
   // function kiểm tra ảnh
   const isImage = (fileName) => {
-    const imageExtensions = ['.jpg', '.jpeg', '.png']
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif']
     const ext = path.extname(fileName).toLowerCase()
     return imageExtensions.includes(ext)
   }
@@ -158,7 +158,7 @@ const storeBanner = async (req, res) => {
 
   // function kiểm tra ảnh
   const isImage = (fileName) => {
-    const imageExtensions = ['.jpg', '.jpeg', '.png']
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif']
     const ext = path.extname(fileName).toLowerCase()
     return imageExtensions.includes(ext)
   }

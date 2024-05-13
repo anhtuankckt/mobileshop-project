@@ -392,3 +392,28 @@ body {
 #header-customer div a:hover {
 	text-decoration: none;
 }
+
+/* Custom css - banner.ejs */
+#sidebar .banner-item a {
+	position: relative;
+	display: block;
+	overflow: hidden;
+}
+
+#sidebar .banner-item a::before {
+	position: absolute;
+	content: "";
+	width: 0%;
+	height: 100%;
+	background: #fff;
+	opacity: 0.5;
+	top: 0;
+	left: -20%;
+	transform: skew(-30deg);
+}
+
+#sidebar .banner-item a:hover::before {
+	width: 140%;
+	background: transparent;
+	transition: all 0.6s;
+}

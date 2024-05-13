@@ -394,13 +394,15 @@ body {
 }
 
 /* Custom css - banner.ejs */
-#sidebar .banner-item a {
+#sidebar .banner-item a,
+#banner-near-footer a {
 	position: relative;
 	display: block;
 	overflow: hidden;
 }
 
-#sidebar .banner-item a::before {
+#sidebar .banner-item a::before,
+#banner-near-footer a::before {
 	position: absolute;
 	content: "";
 	width: 0%;
@@ -412,8 +414,17 @@ body {
 	transform: skew(-30deg);
 }
 
-#sidebar .banner-item a:hover::before {
+#sidebar .banner-item a:hover::before,
+#banner-near-footer a:hover::before {
 	width: 140%;
 	background: transparent;
 	transition: all 0.6s;
+}
+
+#banner {
+	margin-top: 20px;
+}
+
+#banner-near-footer {
+	margin-top: 10px;
 }

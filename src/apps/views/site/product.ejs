@@ -10,7 +10,7 @@
     <div id="product-img" class="col-lg-6 col-md-6 col-sm-12">
       <div class="product-img-list">
         <% for (let img of product?.thumbnails) { %>
-        <img src="../uploads/images/<%=img%>">
+        <img src="<%=`${baseUrlImage}/${img}`%>">
         <% } %>
       </div>
     </div>

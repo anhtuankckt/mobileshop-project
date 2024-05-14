@@ -11,9 +11,11 @@
   "author": "anhtuankckt",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1619.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.11",
     "cookie-parser": "^1.4.6",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
     "express": "^4.18.3",

@@ -5,5 +5,6 @@ module.exports = {
   db: require("./db"),
   mail: require('./mail'),
   recaptcha: require('./recaptcha'),
-  social: require('./social')
+  social: require('./social'),
+  aws: require('./aws')
 }

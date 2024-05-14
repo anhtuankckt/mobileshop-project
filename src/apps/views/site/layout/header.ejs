@@ -6,7 +6,7 @@
       <div class="row">
         <div id="logo" class="col-lg-3 col-md-3 col-sm-12" style="overflow: hidden;">
           <% if (configs) { %>
-          <h1><a href="/"><img class="img-fluid" src="../uploads/images/logo/<%=configs?.logo_header%>"></a></h1>
+          <h1><a href="/"><img class="img-fluid" src="<%=`${baseUrlImage}/${configs?.logo_header}`%>"></a></h1>
           <% } else { %>
           <h1><a href="/"><img class="img-fluid" src="images/logo.png"></a></h1>
           <% } %>

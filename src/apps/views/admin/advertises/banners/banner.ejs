@@ -67,8 +67,8 @@
                 <td><%=i%></td>
                 <td><%=banner?.name%></td>
                 <td class="form-group">
-                  <% for (let i of banner?.thumbnails) { %>
-                  <img style="max-width: 300px; max-height: 80px; padding: 5px;" src="../uploads/images/banners/<%=i%>" />
+                  <% for (let fileName of banner?.thumbnails) { %>
+                  <img style="max-width: 300px; max-height: 80px; padding: 5px;" src="<%=`${baseUrlImage}/${fileName}`%>" />
                   <% } %>
                 </td>
                 <td><%=timesAgo(banner?.createdAt)%></td>

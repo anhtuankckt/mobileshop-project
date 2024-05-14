@@ -83,7 +83,7 @@
                 <td class="slide-show-td">
                   <div class="slide-show">
                     <div class="list-images">
-                      <img src="../uploads/images/<%=product?.thumbnails[0]%>" />
+                      <img src="<%= `${baseUrlImage}/${product.thumbnails[0]}` %>" />
                     </div>
                   </div>
                 </td>
@@ -122,19 +122,19 @@
             <% if (currentFilterCat) { %>
             <ul class="pagination">
               <% if (currentPage > 1) { %>
-              <li class="page-item"><a class="page-link" href="/admin/products?filter_cat=<%=currentFilterCat%>&page=<%=currentPage - 1%>">&laquo;</a></li>
+              <li class="page-item"><a class="page-link" href="/admin/products?filter=<%=currentFilterCat%>&page=<%=currentPage - 1%>">&laquo;</a></li>
               <% } %>
 
               <% pages?.forEach((page) => { %>
               <% if (page === '...') { %>
               <li class="page-item"><span class="page-link"><%=page%></span></li>
               <%} else {%>
-              <li class="page-item <%=currentPage == page ? 'active' : ''%>"><a class="page-link" href="/admin/products?filter_cat=<%=currentFilterCat%>&page=<%=page%>"><%=page%></a></li>
+              <li class="page-item <%=currentPage == page ? 'active' : ''%>"><a class="page-link" href="/admin/products?filter=<%=currentFilterCat%>&page=<%=page%>"><%=page%></a></li>
               <% } %>
               <%}) %>
 
               <% if (currentPage < totalPages ) {%>
-              <li class="page-item"><a class="page-link" href="/admin/products?filter_cat=<%=currentFilterCat%>&page=<%=currentPage + 1%>">&raquo;</a></li>
+              <li class="page-item"><a class="page-link" href="/admin/products?filter=<%=currentFilterCat%>&page=<%=currentPage + 1%>">&raquo;</a></li>
               <%} %>
             </ul>
             <% } else { %>

@@ -4,10 +4,10 @@ const commentModel = require('../models/commentModel')
 const paginate = require('../../common/paginate')
 const vndPrice = require('../../libs/vndPrice')
 const slug = require('slug')
-const fs = require('fs')
 const path = require('path')
-const { v4: uuidv4 } = require('uuid')
 const userModel = require('../models/userModel')
+const { s3, bucketName } = require('../configs/awsConfig')
+const crypto = require('crypto')
 
 const index = async (req, res) => {
   const page = parseInt(req.query.page) || 1
@@ -90,19 +90,32 @@ const store = async (req, res) => {
     }
 
     if (thumbnails.length > 0 && thumbnails.length <= 6) {
-      const random = uuidv4()
       const arrThumbnail = []
 
-      let index = 1
       for (let item of thumbnails) {
         if (!isImage(item.originalname)) {
           const error = 'File được thêm không phải là ảnh!'
           return res.render('admin/products/add_product', { categories, data: { error } })
         }
-        const fileName = `products/${index}_${random}_${item.originalname}`
-        arrThumbnail.push(fileName)
-        fs.renameSync(item.path, path.resolve('src/public/uploads/images', fileName))
-        index++
+
+        const random = (bytes = 8) => crypto.randomBytes(bytes).toString('hex')
+        const fileName = `products/${random()}_${item.originalname}`
+
+        const params = {
+          Bucket: bucketName,
+          Key: fileName,
+          Body: item.buffer,
+          ContentType: item.mimetype
+        }
+
+        try {
+          await s3.upload(params).promise()
+          arrThumbnail.push(fileName)
+        } catch (err) {
+          console.error(err);
+          const error = 'Error uploading file to S3!';
+          return res.render('admin/products/add_product', { categories, data: { error } });
+        }
       }
 
       product['thumbnails'] = arrThumbnail
@@ -165,21 +178,51 @@ const update = async (req, res) => {
     }
 
     if (thumbnails.length > 0 && thumbnails.length <= 6) {
-      const random = uuidv4()
       const arrThumbnail = []
 
-      let index = 1
+      const thumbnailsExists = productExists?.thumbnails
+      if (thumbnailsExists) {
+        for (let fileName of thumbnailsExists) {
+          const params = {
+            Bucket: bucketName,
+            Key: fileName
+          }
+
+          try {
+            await s3.deleteObject(params).promise()
+          } catch (err) {
+            console.error(err)
+            throw new Error('Error deleting file from S3!')
+          }
+        }
+      }
+
       for (let item of thumbnails) {
         if (!isImage(item.originalname)) {
           const error = 'File được thêm không phải là ảnh!'
           return res.render('admin/products/add_product', { categories, data: { error } })
         }
-        const fileName = `products/${index}_${random}_${item.originalname}`
-        arrThumbnail.push(fileName)
-        fs.renameSync(item.path, path.resolve('src/public/uploads/images', fileName))
-        index++
-      }
 
+        const random = (bytes = 8) => crypto.randomBytes(bytes).toString('hex')
+        const fileName = `products/${random()}_${item.originalname}`
+
+        const params = {
+          Bucket: bucketName,
+          Key: fileName,
+          Body: item.buffer,
+          ContentType: item.mimetype
+        }
+
+        try {
+          await s3.upload(params).promise()
+          arrThumbnail.push(fileName)
+        } catch (err) {
+          console.error(err)
+          const error = 'Error uploading file to S3!'
+          return res.render('admin/products/edit_product', { categories, data: { error } })
+        }
+
+      }
       product['thumbnails'] = arrThumbnail
     }
 
@@ -269,6 +312,41 @@ const trashDel = async (req, res) => {
   const arrayIds = ids.split(',')
   if (!arrayIds) res.redirect('/admin/products/trash')
 
+  const imageDefault = [
+    'products/iPhone-7-Plus-32GB-Rose-Gold.png',
+    'products/iPhone-X-256GB-Silver-Seedstock.png',
+    'products/iPhone-Xr-2-Sim-64GB-Yellow.png',
+    'products/iPhone-Xr-2-Sim-256GB-Red.png',
+    'products/iPhone-Xs-256GB-Gold.png',
+    'products/Nokia-1-red.png',
+    'products/Nokia-3.1-Black.png',
+    'products/Nokia-6.1-Plus-Blue.png',
+    'products/Nokia-6.1-Plus-White.png',
+    'products/Nokia-150-White.png',
+    'products/OPPO-A3s–16GB-Red.png',
+    'products/OPPO-A7-64GB-Blue.png',
+    'products/OPPO-F7-128GB-Black.png',
+    'products/OPPO-F9-Sunrise-Red.png',
+    'products/OPPO-R17-Pro-Lavender.png',
+    'products/Samsung-Galaxy-A9-2018-Black.png',
+    'products/Samsung-Galaxy-J2-Core-Gold.png',
+    'products/Samsung-Galaxy-J4-Core-Black.png',
+    'products/Samsung-Galaxy-S9-Plus-64GB-Orchid-Gray.png',
+    'products/Samsung-Galaxy-S9-Plus-Black-128GB.png',
+    'products/Vivo-V7-Gold.png',
+    'products/Vivo-V9-Gold.png',
+    'products/Vivo-Y53C-Gold.png',
+    'products/Vivo-Y69-Gold.png',
+    'products/Vivo-Y81i-Red.png',
+    'products/Xiaomi-Mi-8-Pro-Black.png',
+    'products/Xiaomi-Mi-A1-Black.png',
+    'products/Xiaomi-Mi-A1-Gold.png',
+    'products/Xiaomi-Mi-Max-3-Ram-4–64GB-Black.png',
+    'products/Xiaomi-Mi-Max-3-Ram-4â64GB-Black.png',
+    'products/Xiaomi-Redmi-Note-6-Pro–32GB-Blue.png',
+    'products/Xiaooooomi-Redmi-Note-6-Proâ32GB.png'
+  ]
+
   for (let id of arrayIds) {
     const product = await productModel.findById(id)
     // Xoác các comment có prd_id là id
@@ -277,16 +355,17 @@ const trashDel = async (req, res) => {
     const thumbnails = product?.thumbnails
 
     if (thumbnails) {
-      for (let item of thumbnails) {
-        const imageName = path.basename(item)
-        const imagePathDir = path.resolve('src/public/uploads/images/products')
-        const imagesWithSameName = fs.readdirSync(imagePathDir).filter(file => file === imageName)
+      for (let fileName of thumbnails) {
+        const params = {
+          Bucket: bucketName,
+          Key: !imageDefault.includes(fileName) ? fileName : 'random'
+        }
 
-        if (imagesWithSameName.length > 1) {
-          const filePath = path.resolve('src/public/uploads/images', item)
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath)
-          }
+        try {
+          await s3.deleteObject(params).promise()
+        } catch (err) {
+          console.error(err)
+          throw new Error('Error deleting file from S3!')
         }
       }
     }

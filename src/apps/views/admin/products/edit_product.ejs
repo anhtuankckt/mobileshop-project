@@ -8,7 +8,7 @@
       <li><a href="/admin/products"><svg class="glyph stroked home">
             <use xlink:href="#stroked-home"></use>
           </svg></a></li>
-      <li><a href="">Quản lý sản phẩm</a></li>
+      <li><a href="/admin/products">Quản lý sản phẩm</a></li>
       <li class="active"><%=product?.name%></li>
     </ol>
   </div>
@@ -25,7 +25,7 @@
       <div class="panel panel-default">
         <div class="panel-body">
           <div class="col-md-6">
-            <form role="form" method="post" action="/admin/products/update/<%=product?._id%>" enctype="multipart/form-data">
+            <form role="form" method="post" action="/admin/products/edit/<%=product?._id%>" enctype="multipart/form-data">
               <div class="form-group">
                 <label>Tên sản phẩm</label>
                 <input type="text" name="name" required class="form-control" value="<%=product?.name%>" placeholder="">
@@ -62,9 +62,9 @@
               <label>Ảnh sản phẩm</label>
               <input type="file" name="thumbnails" multiple>
               <br>
-              <div style="display: flex; overflow-x: auto; ">
-                <% product.thumbnails.map(i => { %>
-                <img width="120" height="auto" src="../uploads/images/<%=i%>">
+              <div style="display: flex; overflow-x: auto; width: 255px; ">
+                <% product.thumbnails.map(fileName => { %>
+                <img width="auto" height="160" src="<%=`${baseUrlImage}/${fileName}`%>">
                 <% }) %>
               </div>
             </div>

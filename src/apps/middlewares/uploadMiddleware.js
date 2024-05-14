@@ -1,8 +1,7 @@
 const multer = require('multer')
-const config = require('config')
 
-const tmp = config.get('app.tmp')
+const storage = multer.memoryStorage()
 
-const upload = multer({ dest: tmp })
+const upload = multer({ storage: storage })
 
 module.exports = upload

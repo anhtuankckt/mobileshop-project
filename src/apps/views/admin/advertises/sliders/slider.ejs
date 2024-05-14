@@ -67,8 +67,8 @@
                 <td><%=i%></td>
                 <td><%=slider?.name%></td>
                 <td class="form-group">
-                  <% for (let i of slider?.thumbnails) { %>
-                  <img style="max-width: 300px; max-height: 80px; padding: 5px;" src="../uploads/images/sliders/<%=i%>" />
+                  <% for (let fileName of slider?.thumbnails) { %>
+                  <img style="max-width: 300px; max-height: 80px; padding: 5px;" src="<%=`${baseUrlImage}/${fileName}`%>" />
                   <% } %>
                 </td>
                 <td><%=timesAgo(slider?.createdAt)%></td>

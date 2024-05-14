@@ -3,6 +3,7 @@ const sliderModel = require('../models/sliderModel')
 const bannerModel = require('../models/bannerModel')
 const customerModel = require('../models/customerModel')
 const categoryModel = require('../models/categoryModel')
+const config = require('config')
 
 module.exports = async (req, res, next) => {
   const categories = await categoryModel.find({ is_delete: false })
@@ -21,6 +22,8 @@ module.exports = async (req, res, next) => {
 
   const customer = await customerModel.findOne({ email: req.session.customerEmail })
   res.locals.customer = customer
+
+  res.locals.baseUrlImage = config.get('app.baseUrlImage')
 
   next()
 }

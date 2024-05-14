@@ -5,7 +5,7 @@
     <% if (banners && banners.thumbnails.length > 0) { %>
     <% for (let banner of banners.thumbnails) { %>
     <div class="banner-item">
-      <a href="/"><img class="img-fluid" src="../uploads/images/banners/<%=banner%>"></a>
+      <a href="/"><img class="img-fluid" src="<%=`${baseUrlImage}/${banner}`%>"></a>
     </div>
     <% } %>
     <% } else { %>

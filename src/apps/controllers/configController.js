@@ -1,9 +1,9 @@
 const configModel = require('../models/configModel')
 const userModel = require('../models/userModel')
 const paginate = require('../../common/paginate')
-const fs = require('fs')
 const path = require('path')
-const { v4: uuidv4 } = require('uuid')
+const crypto = require('crypto')
+const { s3, bucketName } = require('../configs/awsConfig')
 
 const index = async (req, res) => {
   const page = parseInt(req.query.page) || 1
@@ -75,10 +75,33 @@ const store = async (req, res) => {
           }
         })
       }
-      const random = uuidv4().slice(0, 6)
-      const fileName = `${random}_${logo.originalname}`
+      const random = (bytes = 4) => crypto.randomBytes(bytes).toString('hex')
+      const fileName = `configs/${random()}_${logo.originalname}`
+
+      const params = {
+        Bucket: bucketName,
+        Key: fileName,
+        Body: logo.buffer,
+        ContentType: logo.mimetype
+      }
+
+      try {
+        await s3.upload(params).promise()
+      } catch (err) {
+        console.error(err)
+        const error = 'Error uploading file to S3!'
+        return res.render('admin/configs/add_config', {
+          data: { error },
+          config: {
+            intro,
+            address,
+            service,
+            hotline_phone,
+            hotline_email
+          }
+        })
+      }
       newConfig['logo_header'] = fileName
-      fs.renameSync(logo.path, path.resolve('src/public/uploads/images/logo', fileName))
     }
 
     // Xử lí logo_footer (hiện đang là array)
@@ -96,10 +119,32 @@ const store = async (req, res) => {
           }
         })
       }
-      const random = uuidv4().slice(3, 6)
-      const fileName = `${random}_${logo.originalname}`
+      const random = (bytes = 4) => crypto.randomBytes(bytes).toString('hex')
+      const fileName = `configs/${random()}_${logo.originalname}`
+      const params = {
+        Bucket: bucketName,
+        Key: fileName,
+        Body: logo.buffer,
+        ContentType: logo.mimetype
+      }
+
+      try {
+        await s3.upload(params).promise()
+      } catch (err) {
+        console.error(err)
+        const error = 'Error uploading file to S3!'
+        return res.render('admin/configs/add_config', {
+          data: { error },
+          config: {
+            intro,
+            address,
+            service,
+            hotline_phone,
+            hotline_email
+          }
+        })
+      }
       newConfig['logo_footer'] = fileName
-      fs.renameSync(logo.path, path.resolve('src/public/uploads/images/logo', fileName))
     }
 
     await newConfig.save()
@@ -119,6 +164,8 @@ const update = async (req, res) => {
   const { intro, address, service, hotline_phone, hotline_email } = req.body
   const { logo_header, logo_footer } = req.files
   const config = await configModel.findById(id)
+  const logoHeaderExists = config?.logo_header
+  const logoFooterExists = config?.logo_footer
 
   const updateConfig = {
     intro,
@@ -136,6 +183,23 @@ const update = async (req, res) => {
   }
 
   if (logo_header) {
+    // Xóa ảnh cũ trước
+    if (logoHeaderExists) {
+      for (let fileName of logoHeaderExists) {
+        const params = {
+          Bucket: bucketName,
+          Key: fileName
+        }
+
+        try {
+          await s3.deleteObject(params).promise()
+        } catch (err) {
+          console.error(err)
+          throw new Error('Error deleting file from S3!')
+        }
+      }
+    }
+
     // logo_header hiện đang ở là array
     for (let logo of logo_header) {
       if (!isImage(logo.originalname)) {
@@ -154,14 +218,55 @@ const update = async (req, res) => {
           }
         })
       }
-      const random = uuidv4().slice(0, 6)
-      const fileName = `${random}_${logo.originalname}`
+      const random = (bytes = 4) => crypto.randomBytes(bytes).toString('hex')
+      const fileName = `configs/${random()}_${logo.originalname}`
+
+      const params = {
+        Bucket: bucketName,
+        Key: fileName,
+        Body: logo.buffer,
+        ContentType: logo.mimetype
+      }
+
+      try {
+        await s3.upload(params).promise()
+      } catch (err) {
+        console.error(err)
+        const error = 'Error uploading file to S3!'
+        return res.render('admin/configs/add_config', {
+          data: { error },
+          config: {
+            intro,
+            address,
+            service,
+            hotline_phone,
+            hotline_email
+          }
+        })
+      }
       updateConfig['logo_header'] = fileName
-      fs.renameSync(logo.path, path.resolve('src/public/uploads/images/logo', fileName))
     }
   }
 
   if (logo_footer) {
+    // Xóa logo footer đi trước
+    if (logoFooterExists) {
+      for (let fileName of logoFooterExists) {
+        const params = {
+          Bucket: bucketName,
+          Key: fileName
+        }
+
+        try {
+          await s3.deleteObject(params).promise()
+        } catch (err) {
+          console.error(err)
+          throw new Error('Error deleting file from S3!')
+        }
+      }
+    }
+
+
     // logo_footer hiện đang ở là array
     for (let logo of logo_footer) {
       if (!isImage(logo.originalname)) {
@@ -180,10 +285,26 @@ const update = async (req, res) => {
           }
         })
       }
-      const random = uuidv4().slice(3, 6)
-      const fileName = `${random}_${logo.originalname}`
+      const random = (bytes = 4) => crypto.randomBytes(bytes).toString('hex')
+      const fileName = `configs/${random()}_${logo.originalname}`
+
+      try {
+        await s3.upload(params).promise()
+      } catch (err) {
+        console.error(err)
+        const error = 'Error uploading file to S3!'
+        return res.render('admin/configs/add_config', {
+          data: { error },
+          config: {
+            intro,
+            address,
+            service,
+            hotline_phone,
+            hotline_email
+          }
+        })
+      }
       updateConfig['logo_footer'] = fileName
-      fs.renameSync(logo.path, path.resolve('src/public/uploads/images/logo', fileName))
     }
   }
 
@@ -220,27 +341,23 @@ const del = async (req, res) => {
   const arrIds = ids.split(',')
   if (!arrIds) res.redirect('/admin/configs')
 
-  for (let id of arrIds) {
-    const config = await configModel.findById(id)
-    const logo_header = config?.logo_header
-    const logo_footer = config?.logo_footer
+  const configs = await configModel.find({ _id: { $in: arrIds } })
 
-    await configModel.deleteOne({ _id: id })
-
-    if (logo_header) {
-      const filePath = path.resolve('src/public/uploads/images/logo', logo_header)
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath)
-      }
+  for (let config of configs) {
+    const paramsHeader = {
+      Bucket: bucketName,
+      Key: config?.logo_header
     }
+    await s3.deleteObject(paramsHeader).promise()
 
-    if (logo_footer) {
-      const filePath = path.resolve('src/public/uploads/images/logo', logo_footer)
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath)
-      }
+    const paramsFooter = {
+      Bucket: bucketName,
+      Key: config?.logo_footer
     }
+    await s3.deleteObject(paramsFooter).promise()
   }
+
+  await configModel.deleteMany({ _id: { $in: arrIds } })
 
   res.redirect('/admin/configs')
 }

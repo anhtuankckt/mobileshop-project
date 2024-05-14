@@ -6,6 +6,8 @@ const timesAgo = require('../../libs/timesAgo')
 const fs = require('fs')
 const path = require('path')
 const { v4: uuidv4 } = require('uuid')
+const { s3, bucketName } = require('../configs/awsConfig')
+const crypto = require('crypto')
 
 /** SLIDERS */
 const index = async (req, res) => {
@@ -52,11 +54,9 @@ const storeSlider = async (req, res) => {
   }
 
   if (thumbnails && thumbnails.length > 0 && thumbnails.length <= 8) {
-    const random = uuidv4().slice(0, 6)
     const thumbnailsArray = []
 
     // Lặp qua từng ảnh để kiểm tra kích thước
-    let index = 1
     for (let thumbnail of thumbnails) {
       // Nếu file không phải ảnh => Trả về giao diện + cảnh báo
       if (!isImage(thumbnail.originalname)) {
@@ -64,11 +64,24 @@ const storeSlider = async (req, res) => {
         return res.render('admin/advertises/sliders/add_slider', { data: { error } })
       }
 
-      const fileName = `${index}_${random}_${thumbnail.originalname}`
-      thumbnailsArray.push(fileName)
-      fs.renameSync(thumbnail.path, path.resolve('src/public/uploads/images/sliders', fileName))
+      const random = (bytes = 4) => crypto.randomBytes(bytes).toString('hex')
+      const fileName = `sliders/${random()}_${thumbnail.originalname}`
 
-      index++
+      const params = {
+        Bucket: bucketName,
+        Key: fileName,
+        Body: thumbnail.buffer,
+        ContentType: thumbnail.mimetype
+      }
+
+      try {
+        await s3.upload(params).promise()
+        thumbnailsArray.push(fileName)
+      } catch (err) {
+        console.error(err)
+        const error = 'Error uploading file to S3!'
+        return res.render('admin/advertises/sliders/add_slider', { data: { error } })
+      }
     }
 
     const newThumbnails = {
@@ -84,25 +97,24 @@ const storeSlider = async (req, res) => {
 const delSliders = async (req, res) => {
   const { ids } = req.params
   if (!ids) res.redirect('/admin/advertises/sliders')
-
   const arrIds = ids.split(',')
+
   for (let id of arrIds) {
     const slider = await sliderModel.findById(id)
-
     const thumbnails = slider?.thumbnails
 
-    await sliderModel.deleteOne({ _id: id })
-
-    if (thumbnails) {
-      const filePaths = thumbnails.map(i => path.resolve('src/public/uploads/images/sliders', i))
-      filePaths.forEach(j => {
-        if (fs.existsSync(j)) {
-          fs.unlinkSync(j)
+    if (thumbnails.length > 0) {
+      for (let item of thumbnails) {
+        const params = {
+          Bucket: bucketName,
+          Key: item
         }
-      })
+        await s3.deleteObject(params).promise()
+      }
     }
   }
 
+  await sliderModel.deleteMany({ _id: { $in: arrIds } })
   res.redirect('/admin/advertises/sliders')
 }
 
@@ -169,11 +181,9 @@ const storeBanner = async (req, res) => {
   }
 
   if (thumbnails && thumbnails.length > 0 && thumbnails.length <= 8) {
-    const random = uuidv4().slice(3, 6)
     const thumbnailsArray = []
 
     // Lặp qua từng file để kiểm tra
-    let index = 1
     for (let thumbnail of thumbnails) {
       // Kiểm tra file không phải ảnh => giao diện
       if (!isImage(thumbnail.originalname)) {
@@ -181,13 +191,24 @@ const storeBanner = async (req, res) => {
         return res.render('admin/advertises/banners/add_banner', { data: { error } })
       }
 
-      const fileName = `${index}_${random}_${thumbnail.originalname}`
+      const random = (bytes = 4) => crypto.randomBytes(bytes).toString('hex')
+      const fileName = `banners/${random()}_${thumbnail.originalname}`
 
-      thumbnailsArray.push(fileName)
+      const params = {
+        Bucket: bucketName,
+        Key: fileName,
+        Body: thumbnail.buffer,
+        ContentType: thumbnail.mimetype
+      }
 
-      fs.renameSync(thumbnail.path, path.resolve('src/public/uploads/images/banners', fileName))
-
-      index++
+      try {
+        await s3.upload(params).promise()
+        thumbnailsArray.push(fileName)
+      } catch (err) {
+        console.error(err)
+        const error = 'Error uploading file to S3!'
+        return res.render('admin/advertises/sliders/add_slider', { data: { error } })
+      }
     }
 
     const newThumbnails = {
@@ -221,23 +242,24 @@ const offBanner = async (req, res) => {
 const delBanners = async (req, res) => {
   const { ids } = req.params
   const arrIds = ids.split(',')
+
   for (let id of arrIds) {
     const banner = await bannerModel.findById(id)
 
     const thumbnails = banner?.thumbnails
 
-    await bannerModel.deleteOne({ _id: id })
-
-    if (thumbnails) {
-      const filePaths = thumbnails.map(i => path.resolve('src/public/uploads/images/banners', i))
-      filePaths.forEach(j => {
-        if (fs.existsSync(j)) {
-          fs.unlinkSync(j)
+    if (thumbnails.length > 0) {
+      for (let item of thumbnails) {
+        const params = {
+          Bucket: bucketName,
+          Key: item
         }
-      })
+        await s3.deleteObject(params).promise()
+      }
     }
   }
 
+  await bannerModel.deleteMany({ _id: { $in: arrIds } })
   res.redirect('/admin/advertises/banners')
 }
 

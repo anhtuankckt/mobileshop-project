@@ -10,9 +10,9 @@ router.get('/', productController.index)
 //GET admin/products/create
 router.get('/create', authMiddleware.checkRole, productController.create)
 
-//POST admin/products/store
+//POST admin/products/create
 router.post(
-  '/store',
+  '/create',
   uploadMiddleware.fields([{ name: 'thumbnails' }]),
   authMiddleware.checkRole,
   productController.store
@@ -21,9 +21,9 @@ router.post(
 //GET admin/products/edit/:id
 router.get('/edit/:id', authMiddleware.checkRole, productController.edit)
 
-//POST admin/products/update/:id
+//POST admin/products/edit/:id
 router.post(
-  '/update/:id',
+  '/edit/:id',
   uploadMiddleware.fields([{ name: 'thumbnails' }]),
   authMiddleware.checkRole,
   productController.update

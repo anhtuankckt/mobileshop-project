@@ -55,8 +55,8 @@
               <% for (let config of configs) { %>
               <tr>
                 <td><%=i%></td>
-                <td style="text-align: center"><img width="210" height="38" src="../uploads/images/logo/<%=config?.logo_header%>" /></td>
-                <td style="text-align: center"><img width="210" height="38" src="../uploads/images/logo/<%=config?.logo_footer%>" /></td>
+                <td style="text-align: center"><img width="210" height="38" src="<%=`${baseUrlImage}/${config?.logo_header}`%>" /></td>
+                <td style="text-align: center"><img width="210" height="38" src="<%=`${baseUrlImage}/${config?.logo_footer}`%>" /></td>
                 <td><%=config?.intro%></td>
                 <td><%=config?.address%></td>
                 <td><%=config?.service%></td>

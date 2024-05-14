@@ -3,7 +3,7 @@
     <% if (configs) { %>
     <div class="row">
       <div id="logo-2" class="col-lg-3 col-md-6 col-sm-12">
-        <h2 style="overflow: hidden; height: 60px;"><a href="/"><img class="img-fluid" src="../uploads/images/logo/<%=configs?.logo_footer%>"></a></h2>
+        <h2 style="overflow: hidden; height: 60px;"><a href="/"><img class="img-fluid" src="<%=`${baseUrlImage}/${configs?.logo_footer}`%>"></a></h2>
         <p><%=configs?.intro%></p>
       </div>
       <div id="address" class="col-lg-3 col-md-6 col-sm-12">

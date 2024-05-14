@@ -58,7 +58,7 @@
                   <div class="slide-show">
                     <div class="list-images">
                       <% for (let item of product?.thumbnails) { %>
-                      <img src="../uploads/images/<%=item%>" />
+                      <img src="<%=`${baseUrlImage}/${item}`%>" />
                       <% } %>
                     </div>
                   </div>

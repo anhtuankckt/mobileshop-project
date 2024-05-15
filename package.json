@@ -1,7 +1,7 @@
 {
-  "name": "mobileshop-project",
+  "name": "project-tienminhmobile",
   "version": "1.0.0",
-  "description": "mobileshop-project",
+  "description": "project-tienminhmobile",
   "main": "index.js",
   "scripts": {
     "production": "node ./src/bin/www.js",

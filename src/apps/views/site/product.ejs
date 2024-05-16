@@ -8,10 +8,22 @@
   <% if (product) { %>
   <div id="product-head" class="row">
     <div id="product-img" class="col-lg-6 col-md-6 col-sm-12">
-      <div class="product-img-list">
-        <% for (let img of product?.thumbnails) { %>
-        <img src="<%=`${baseUrlImage}/${img}`%>">
-        <% } %>
+      <div class="product-image-container">
+        <div class="product-image-main">
+          <img class="img-feature" src="<%=`${baseUrlImage}/${product?.thumbnails[0]}`%>" />
+          <div class="control prev">
+            <box-icon name='chevron-left'></box-icon>
+          </div>
+          <div class="control next">
+            <box-icon name='chevron-right'></box-icon>
+          </div>
+        </div>
+        <div class="product-image-list">
+          <% for (let img of product?.thumbnails) { %>
+          <div><img src="<%=`${baseUrlImage}/${img}`%>"></div>
+          <% } %>
+
+        </div>
       </div>
     </div>
     <div id="product-details" class="col-lg-6 col-md-6 col-sm-12">
@@ -232,6 +244,63 @@
       return false
     }
   }
+</script>
+
+<script>
+  const imgFeature = document.querySelector('.img-feature')
+  const listImage = document.querySelectorAll('.product-image-list img')
+  const prevBtn = document.querySelector('.prev')
+  const nextBtn = document.querySelector('.next')
+
+  let currentIndex
+
+  function updateImageByIndex(index) {
+    listImage.forEach(item => {
+      item.classList.remove('active')
+    })
+
+    currentIndex = index
+    imgFeature.src = listImage[index].getAttribute('src')
+    listImage[index].classList.add('active')
+  }
+
+  listImage.forEach((imgElement, index) => {
+    imgElement.addEventListener('click', function(e) {
+      imgFeature.style.opacity = '0'
+      setTimeout(() => {
+        updateImageByIndex(index)
+        imgFeature.style.opacity = '1'
+      }, 350)
+    })
+  })
+
+  prevBtn.addEventListener('click', function(e) {
+    if (currentIndex == 0) {
+      currentIndex = listImage.length - 1
+    } else {
+      currentIndex--
+    }
+    imgFeature.style.opacity = '0'
+    setTimeout(() => {
+      updateImageByIndex(currentIndex)
+      imgFeature.style.opacity = '1'
+    }, 350)
+  })
+
+  nextBtn.addEventListener('click', function(e) {
+    if (currentIndex == listImage.length - 1) {
+      currentIndex = 0
+    } else {
+      currentIndex++
+    }
+    imgFeature.style.opacity = '0'
+    setTimeout(() => {
+      updateImageByIndex(currentIndex)
+      imgFeature.style.opacity = '1'
+    }, 350)
+  })
+
+  updateImageByIndex(0)
 </script>
 
 <%- include("./layout/sidebar.ejs") -%>

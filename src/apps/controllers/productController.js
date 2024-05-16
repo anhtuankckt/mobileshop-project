@@ -78,8 +78,8 @@ const store = async (req, res) => {
   }
 
   if (thumbnails) {
-    if (thumbnails.length > 6) {
-      const error = 'Thêm tối đa 6 ảnh sản phẩm!'
+    if (thumbnails.length > 5) {
+      const error = 'Thêm tối đa 5 ảnh sản phẩm!'
       return res.render('admin/products/add_product', { categories, data: { error } })
     }
     // Kiểm tra ảnh
@@ -166,9 +166,9 @@ const update = async (req, res) => {
   }
 
   if (thumbnails) {
-    if (thumbnails.length > 6) {
-      const error = 'Thêm tối đa 6 ảnh sản phẩm!'
-      return res.render('admin/products/add_product', { categories, data: { error } })
+    if (thumbnails.length > 5) {
+      const error = 'Thêm tối đa 5 ảnh sản phẩm!'
+      return res.render('admin/products/edit_product', { product: productExists, categories, data: { error } })
     }
     // Kiểm tra ảnh
     const isImage = (fileName) => {
@@ -200,7 +200,7 @@ const update = async (req, res) => {
       for (let item of thumbnails) {
         if (!isImage(item.originalname)) {
           const error = 'File được thêm không phải là ảnh!'
-          return res.render('admin/products/add_product', { categories, data: { error } })
+          return res.render('admin/products/edit_product', { product: productExists, categories, data: { error } })
         }
 
         const random = (bytes = 8) => crypto.randomBytes(bytes).toString('hex')
@@ -219,7 +219,7 @@ const update = async (req, res) => {
         } catch (err) {
           console.error(err)
           const error = 'Error uploading file to S3!'
-          return res.render('admin/products/edit_product', { categories, data: { error } })
+          return res.render('admin/products/edit_product', { product: productExists, categories, data: { error } })
         }
 
       }

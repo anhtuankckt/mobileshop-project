@@ -41,7 +41,7 @@ c/ Trang site:
 - Người dùng có thể kiểm tra danh sách đơn hàng đã có hoặc chưa có.
 
 **2. Quản lí bình luận**
-* Bình luận có dạng Nested
+Bình luận có dạng Nested
 a/ Xây dựng commentModel:
 Tại đây có các field:
 - prd_id: Thông tin sản phẩm
@@ -184,4 +184,4 @@ a/ Hoạt động - trang admin:
 - Khi xóa mềm thì sẽ chuyển *is_delete: true* cho user, category, products, ... cần xóa.
 - Với thùng rác, cần xây dựng views, chỉ hiển thị các user, category, products, ... có *is_delete: true*
 - Trong thùng rác khôi phục thì đặt lại *is_delete*, xóa hẳn thì sẽ chuyển hướng đến router cho việc xóa hẳn.
-<!--  -->
+<!-- End  -->

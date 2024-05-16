@@ -1,5 +1,5 @@
 module.exports = {
-  port: process.env.SERVER_PORT || 3000,
+  port: process.env.SERVER_PORT,
   staticFolder: `${__dirname}/../src/public`,
   viewsFolder: `${__dirname}/../src/apps/views`,
   viewEngine: "ejs",

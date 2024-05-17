@@ -95,7 +95,7 @@
               <% } %>
             </div>
             <div class="col-md-6">
-              <div class="form-group">
+              <div class="form-group edit-image">
                 <label>Ảnh sản phẩm</label>
                 <input type="file" name="thumbnails" multiple>
                 <br>
@@ -154,12 +154,12 @@
 
   function updateImageByIndex(index) {
     listImage.forEach(item => {
-      item.classList.remove('activeImg')
+      item.classList.remove('activeImage')
     })
 
     currentIndex = index
     imgFeature.src = listImage[index].getAttribute('src')
-    listImage[index].classList.add('activeImg')
+    listImage[index].classList.add('activeImage')
   }
 
   listImage.forEach((imgElement, index) => {

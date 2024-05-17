@@ -1150,10 +1150,10 @@ a.todo-list-item:focus {
 
 .product-image-list {
 	width: 100%;
-	height: 80px;
+	height: 100px;
 	display: flex;
 	justify-content: space-between;
-	overflow: hidden;
+	overflow-x: auto;
 }
 
 .product-image-list div {
@@ -1161,7 +1161,7 @@ a.todo-list-item:focus {
 	cursor: pointer;
 }
 
-.product-image-list div img {
+.product-image-list img {
 	padding: 3px;
 }
 
@@ -1188,6 +1188,29 @@ a.todo-list-item:focus {
 	right: 10px;
 }
 
-.activeImg {
-	background: #ff6600;
+.activeImage {
+	border: 2px solid #ff6600;
+}
+
+/* width */
+.product-image-list::-webkit-scrollbar {
+	height: 6px;
+}
+
+/* Track */
+.product-image-list::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 5px grey;
+	border-radius: 10px;
+}
+
+/* Handle */
+.product-image-list::-webkit-scrollbar-thumb {
+	background: #ffbe76;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+/* Cusstom edit.ejs */
+.edit-image {
+	margin-bottom: 50px;
 }

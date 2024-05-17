@@ -22,7 +22,6 @@
           <% for (let img of product?.thumbnails) { %>
           <div><img src="<%=`${baseUrlImage}/${img}`%>"></div>
           <% } %>
-
         </div>
       </div>
     </div>
@@ -256,12 +255,12 @@
 
   function updateImageByIndex(index) {
     listImage.forEach(item => {
-      item.classList.remove('active')
+      item.classList.remove('activeImage')
     })
 
     currentIndex = index
     imgFeature.src = listImage[index].getAttribute('src')
-    listImage[index].classList.add('active')
+    listImage[index].classList.add('activeImage')
   }
 
   listImage.forEach((imgElement, index) => {

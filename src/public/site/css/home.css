@@ -428,3 +428,9 @@ body {
 #banner-near-footer {
 	margin-top: 10px;
 }
+
+/* Custom CSS */
+.product-item img {
+	object-fit: contain;
+	width: 100%;
+}

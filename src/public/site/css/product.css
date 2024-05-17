@@ -29,7 +29,7 @@
 
 #product-details ul li {
 	list-style: none;
-	height: 30px;
+	/* height: 30px; */
 	line-height: 30px;
 }
 

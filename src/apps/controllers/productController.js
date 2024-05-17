@@ -57,9 +57,15 @@ const store = async (req, res) => {
   const { body } = req
   const { thumbnails } = req.files
   const categories = await categoryModel.find({ is_delete: false }).populate('cat_parrent')
-
+  console.log('body.promotion', body.promotion)
+  console.log('body.description', body.description)
   if (!body.cat_id) {
     const error = 'Chưa có danh mục cấp 3. Hãy tạo mới trước khi thêm sản phẩm !'
+    return res.render('admin/products/add_product', { categories, data: { error } })
+  }
+
+  if (!body.name.trim() || !body.price.trim() || !body.promotion.trim() || !body.description.trim() || !body.accessories.trim()) {
+    const error = 'Không để trống các trường dữ liệu. Vui lòng kiểm tra lại !'
     return res.render('admin/products/add_product', { categories, data: { error } })
   }
 
@@ -148,6 +154,11 @@ const update = async (req, res) => {
 
   if (!body.cat_id) {
     const error = 'Chưa có danh mục cấp 3. Hãy tạo mới trước khi sửa sản phẩm !'
+    return res.render('admin/products/edit_product', { product: productExists, categories, data: { error } })
+  }
+
+  if (!body.name.trim() || !body.price.trim() || !body.promotion.trim() || !body.description.trim() || !body.accessories.trim()) {
+    const error = 'Không để trống các trường dữ liệu. Vui lòng kiểm tra lại !'
     return res.render('admin/products/edit_product', { product: productExists, categories, data: { error } })
   }
 

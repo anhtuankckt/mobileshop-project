@@ -324,8 +324,7 @@ const order = async (req, res) => {
     const product = await productModel.findById(item.prd_id)
     if (product) {
       if (item.qty > product.store) {
-        const error = 'Số lượng sản phẩm trong kho không đủ!'
-        return res.redirect(`/cart?error=${error}`)
+        return res.redirect(`/cart?error=404`)
       }
       product.store -= item.qty
       await product.save()

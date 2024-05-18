@@ -6,9 +6,6 @@
 <!--	Cart	-->
 <% if (items && items.length > 0) { %>
 <div id="my-cart">
-  <% if (error) { %>
-  <span class="btn btn-danger"><%=error%></span>
-  <% } %>
   <div class="row">
     <div class="cart-nav-item col-lg-7 col-md-7 col-sm-12">Thông tin sản phẩm</div>
     <div class="cart-nav-item col-lg-2 col-md-2 col-sm-12">Tùy chọn</div>
@@ -86,6 +83,15 @@
     } else {
       alert('Cần phải đăng nhập để mua hàng!')
       return window.location.href = `/signin`
+    }
+  }
+
+  window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const error = urlParams.get('error')
+    if (error) {
+      alert('Số lượng sản phẩm trong kho không đủ. Vui lòng kiểm tra và cập nhật lại!')
+      return window.location.href = `/cart`
     }
   }
 </script>

@@ -15,7 +15,7 @@
     <% for (let item of items) { %>
     <div class="cart-item row">
       <div class="cart-thumb col-lg-7 col-md-7 col-sm-12">
-        <img src="../uploads/images/<%=item?.thumbnails[0]%>">
+        <img src="<%=`${baseUrlImage}/${item?.thumbnails[0]}`%>">
         <h4><%=item?.name%></h4>
       </div>
 

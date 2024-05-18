@@ -1,0 +1,135 @@
+<%- include("../layout/head.ejs", {title: "Administrator/Customers" }) -%>
+<%- include("../layout/header.ejs") -%>
+<%- include("../layout/sidebar.ejs") -%>
+
+<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+  <div class="row">
+    <ol class="breadcrumb">
+      <li><a href="/admin/customers"><svg class="glyph stroked home">
+            <use xlink:href="#stroked-home"></use>
+          </svg></a></li>
+      <li class="active">Danh sách khách hàng</li>
+    </ol>
+  </div>
+  <!--/.row-->
+
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Danh sách khách hàng</h1>
+    </div>
+  </div>
+  <!--/.row-->
+  <div id="toolbar" class="btn-group">
+    <% if (role !== 'admin') { %>
+    <span class="btn btn-primary">Bạn chỉ được xem danh sách</span>
+    <% } %>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <% if (customers && customers.length > 0) { %>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <table data-toolbar="#toolbar" data-toggle="table">
+            <thead>
+              <tr>
+                <th data-field="id" data-sortable="true">STT</th>
+                <th data-field="name" data-sortable="true">Họ & Tên</th>
+                <th data-field="price" data-sortable="true">Email</th>
+                <th>Số đơn đã hoàn thành</th>
+                <th>Số đơn đang chờ</th>
+                <th>Thành viên</th>
+                <% if (role === 'admin') { %>
+                <th>Hành động</th>
+                <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% let index = 1 %>
+              <% for (let customer of customers) { %>
+              <% let orderConfirmed = [] %>
+              <% let orderWait = [] %>
+              <% for (let order of orders) { %>
+              <% if (order.confirmed && order.customer_id.toString() === customer._id.toString()) { %>
+              <% orderConfirmed.push(order) %>
+              <% } %>
+              <% if (!order.confirmed && order.customer_id.toString() === customer._id.toString()) { %>
+              <% orderWait.push(order) %>
+              <% } %>
+              <% } %>
+              <tr>
+                <td><%=index%></td>
+                <td><%=customer?.username%></td>
+                <td><%=customer?.email%></td>
+                <td><%=orderConfirmed.length%></td>
+                <td><%=orderWait.length%></td>
+                <td><%=customer?.member%></td>
+                <% if (role === 'admin') { %>
+                <td class="form-group">
+                  <a onClick="clickDelete('<%=customer?._id%>')" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
+                </td>
+                <% } %>
+              </tr>
+              <% index++ %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-footer">
+          <div id="toolbar" class="btn-group">
+            <a href="/admin/customers/trash" class="btn btn-info">
+              <i class="glyphicon glyphicon-trash"></i>
+            </a>
+          </div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <% if (currentPage > 1) { %>
+              <li class="page-item"><a class="page-link" href="/admin/customers?page=<%=currentPage - 1%>">&laquo;</a></li>
+              <% } %>
+
+              <% pages?.forEach((page) => { %>
+              <% if (page === '...') { %>
+              <li class="page-item"><span class="page-link"><%=page%></span></li>
+              <% } else { %>
+              <li class="page-item <%=currentPage == page && 'active'%>"><a class="page-link" href="/admin/customers?page=<%=page%>"><%=page%></a></li>
+              <% } %>
+              <% }) %>
+
+              <% if (currentPage < totalPages) { %>
+              <li class="page-item"><a class="page-link" href="/admin/customers?page=<%=currentPage + 1%>">&raquo;</a></li>
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <% } else { %>
+      <div style="margin-top: 10px;" class="panel panel-default">
+        <div class="panel-body">
+          <span class="text-danger">Chưa có khách hàng nào</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <a href="/admin/customers/trash" class="btn btn-primary">
+          <i class="glyphicon glyphicon-trash"></i> Khách hàng đã xóa
+        </a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <!--/.row-->
+</div>
+<!--/.main-->
+
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-table.js"></script>
+
+<script>
+  function handleConfirm(id, action) {
+    const isConfirm = confirm(`Bạn có chắc chắn ${action} không?`)
+    const link = () => window.location.href = `/admin/customers/${action}/${id}`
+    return isConfirm ? link() : false
+  }
+  const clickDelete = (id) => handleConfirm(id, 'delete')
+</script>
+
+<%- include("../layout/footer.ejs") -%>

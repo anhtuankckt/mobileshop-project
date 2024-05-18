@@ -52,7 +52,7 @@
                     <li><b>Tên sản phẩm:</b> <%=item?.prd_id?.name%></li>
                     <li><b>Ảnh sản phẩm:</b>
                       <% for (let i of item?.prd_id?.thumbnails) { %>
-                      <img style="width: 40px; height: 40px;" src="../uploads/images/<%=i%>" alt="">
+                      <img style="width: 40px; height: 40px;" src="<%=`${baseUrlImage}/${i}`%>" alt="img">
                       <% } %>
                     </li>
                     <li><b>Số lượng:</b> <%=item?.qty%></li>

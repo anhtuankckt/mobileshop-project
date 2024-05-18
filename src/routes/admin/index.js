@@ -8,6 +8,7 @@ const commentRoute = require('./commentRoute')
 const configRoute = require('./configRoute')
 const advertiseRoute = require('./advertiseRoute')
 const orderRoute = require('./orderRoute')
+const customerRoute = require('./customerRoute')
 const authMiddleware = require('../../apps/middlewares/authMiddleware')
 const adminShareMiddleware = require('../../apps/middlewares/adminShareMiddleware')
 
@@ -43,5 +44,8 @@ router.use('/advertises', authMiddleware.checkAdmin, advertiseRoute)
 // admin/configs
 router.use('/configs', authMiddleware.checkAdmin, configRoute)
 // authMiddleware.checkAdmin
+
+// admin/customers
+router.use('/customers', authMiddleware.checkAdmin, customerRoute)
 
 module.exports = router

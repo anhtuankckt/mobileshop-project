@@ -46,7 +46,7 @@ router.post('/update-cart', siteController.updateCart)
 router.get('/del-cart/:id', siteController.deleteCart)
 
 //GET /oder
-router.get('/order/:id', siteController.order)
+router.get('/order/:id', authMiddleware.checkCustomer, siteController.order)
 
 //GET /success
 router.get('/success', authMiddleware.checkCustomer, siteController.success)

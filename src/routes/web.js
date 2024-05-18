@@ -8,6 +8,6 @@ const authMiddleware = require('../apps/middlewares/authMiddleware')
 router.use('/admin', authMiddleware.checkCookieAdmin, adminRouter)
 
 //SITE /
-router.use('/', authMiddleware.checkCookieSite, siteRoute)
+router.use('/', authMiddleware.checkCookieSite, authMiddleware.checkCustomerDeleted, siteRoute)
 
 module.exports = router

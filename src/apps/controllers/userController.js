@@ -93,6 +93,11 @@ const update = async (req, res) => {
 const del = async (req, res) => {
   const { id } = req.params
   const user = await userModel.findById(id)
+
+  if (!user) {
+    return res.redirect('/admin/users')
+  }
+
   const emailLogin = req.session.email
 
   if (user.email === emailLogin) {

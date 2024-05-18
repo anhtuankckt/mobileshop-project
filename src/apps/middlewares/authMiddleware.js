@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel')
+const customerModel = require('../models/customerModel')
 
 const checkLogin = (req, res, next) => {
   if (req.session.email && req.session.password)
@@ -54,4 +55,15 @@ const checkCookieSite = async (req, res, next) => {
   next()
 }
 
-module.exports = { checkLogin, checkAdmin, checkCustomer, checkRole, checkCookieAdmin, checkCookieSite }
+const checkCustomerDeleted = async (req, res, next) => {
+  if (req.session.customerEmail) {
+    const user = await customerModel.findOne({ email: req.session.customerEmail })
+    if (user.is_delete) {
+      delete req.session.customerEmail
+    }
+  }
+
+  next()
+}
+
+module.exports = { checkLogin, checkAdmin, checkCustomer, checkRole, checkCookieAdmin, checkCookieSite, checkCustomerDeleted }

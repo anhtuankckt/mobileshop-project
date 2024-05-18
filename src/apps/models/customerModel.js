@@ -27,6 +27,10 @@ const customerSchema = new mongoose.Schema({
     default: 'member'
     // member, loyal, VIP
   },
+  is_delete: {
+    type: Boolean,
+    default: false
+  }
 }, { timestamps: true }
 )
 

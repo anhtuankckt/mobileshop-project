@@ -49,7 +49,7 @@
                 <td><%=user?.full_name%></td>
                 <td><%=user?.email%></td>
                 <td><span class="label <%=user?.role == 'admin' ? 'label-danger' : 'label-success'%>"><%=user?.role%></span></td>
-                <% if (rolle === 'admin') { %>
+                <% if (role === 'admin') { %>
                 <td class="form-group">
                   <a onClick="clickRestore('<%=user?._id%>')" class="btn btn-primary">Khôi phục</a>
                   <a onClick="clickDelete('<%=user?._id%>')" class="btn btn-danger">Xóa vĩnh viễn</a>

@@ -244,6 +244,7 @@ const addToCart = async (req, res) => {
 
   if (!isProductExitst) {
     const product = await productModel.findById(id)
+
     newItems.push({
       id,
       name: product?.name,
@@ -296,6 +297,8 @@ const order = async (req, res) => {
   const items = req.session.cart
 
   const customer = await customerModel.findById(id)
+
+  if (customer.is_delete) return res.redirect('/')
 
   const newOrder = new orderModel({})
 
@@ -388,7 +391,7 @@ const postSignup = async (req, res) => {
     return res.render('site/customers/signup', { data: { error } })
   }
 
-  if (password.length < 6 || username.length < 6 || email.length < 6 || phone.length < 6 || address.length < 6) {
+  if (password.length < 5 || username.length < 5 || email.length < 5 || phone.length < 5 || address.length < 5) {
     const error = 'Các trường nhập phải ít nhất 5 kí tự!'
     return res.render('site/customers/signup', { data: { error } })
   }
@@ -429,15 +432,20 @@ const signin = async (req, res) => {
 const postSignin = async (req, res) => {
   const { email, password, remember } = req.body
 
-  const existsEmail = await customerModel.findOne({ email: { $regex: new RegExp(email, 'i') } })
-
   if (!email.trim() || !password.trim()) {
     const error = 'Không để trống email, password!'
     return res.render('site/customers/signin', { data: { error } })
   }
 
+  const existsEmail = await customerModel.findOne({ email: { $regex: new RegExp(email, 'i') } })
+
   if (!existsEmail) {
     const error = 'Email không tồn tại!'
+    return res.render('site/customers/signin', { data: { error } })
+  }
+
+  if (existsEmail.is_delete) {
+    const error = 'Tài khoản của bạn đã bị xóa do vi phạm. Vui lòng tạo tài khoản khác!'
     return res.render('site/customers/signin', { data: { error } })
   }
 

@@ -1,6 +1,7 @@
 const orderModel = require('../models/orderModel')
 const paginate = require('../../common/paginate')
 const vndPrice = require('../../libs/vndPrice')
+const customerModel = require('../models/customerModel')
 
 /** INDEX */
 const index = async (req, res) => {
@@ -49,6 +50,7 @@ const trash = async (req, res) => {
   const page = Number(req.query.page) || 1
   const limit = Number(req.query.limit) || 10
   const skip = page * limit - limit
+  const error = req.query.error
   const query = {}
   query.is_delete = true
 
@@ -67,13 +69,24 @@ const trash = async (req, res) => {
     currentPage: page,
     totalPages,
     pages: paginate(page, totalPages),
-    vndPrice
+    vndPrice,
+    error
   })
 }
 
 const trashRestore = async (req, res) => {
   const { ids } = req.params
   const arrIds = ids.split(',')
+
+  const orders = await orderModel.find({ _id: { $in: arrIds } }).populate('customer_id')
+
+  for (let order of orders) {
+    if (order.customer_id.is_delete) {
+      const error = `Khách hàng đã bị xóa, không khôi phục được!`
+      return res.redirect(`/admin/orders/trash?error=${error}`)
+    }
+  }
+
   await orderModel.updateMany({ _id: { $in: arrIds } }, { $set: { is_delete: false } })
   res.redirect('/admin/orders/trash')
 }

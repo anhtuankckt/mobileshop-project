@@ -32,6 +32,9 @@
         <li><span>Phụ kiện:</span> <%=product?.accessories%></li>
         <li><span>Tình trạng:</span> <%=product?.status%></li>
         <li><span>Khuyến Mãi:</span> <%-product?.promotion%></li>
+        <% if (product.is_stock) { %>
+        <li><span>Số lượng kho:</span> <%=product?.store%></li>
+        <% } %>
         <li id="price">Giá Bán (chưa bao gồm VAT)</li>
         <li id="price-number"><%=vndPrice(product?.price)%>VND</li>
         <li id="status" class="<%=!product?.is_stock && 'text-danger'%>">

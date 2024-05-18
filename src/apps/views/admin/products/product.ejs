@@ -65,6 +65,7 @@
                 <th data-field="name" data-sortable="true">Tên sản phẩm</th>
                 <th data-field="price" data-sortable="true">Giá</th>
                 <th>Ảnh sản phẩm</th>
+                <th>Số lượng</th>
                 <th>Trạng thái</th>
                 <th>Danh mục</th>
                 <% if (role === 'admin') { %>
@@ -87,6 +88,7 @@
                     </div>
                   </div>
                 </td>
+                <td><%=product?.store%></td>
                 <td><span class="label <%=product?.is_stock ? 'label-success' : 'label-danger'%>"><%=product?.is_stock ? "Còn hàng" : "Hết hàng"%></span></td>
                 <td><%=product?.cat_id?.title%></td>
                 <% if (role === 'admin') { %>

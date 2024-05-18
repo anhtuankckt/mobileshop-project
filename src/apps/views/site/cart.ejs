@@ -6,6 +6,9 @@
 <!--	Cart	-->
 <% if (items && items.length > 0) { %>
 <div id="my-cart">
+  <% if (error) { %>
+  <span class="btn btn-danger"><%=error%></span>
+  <% } %>
   <div class="row">
     <div class="cart-nav-item col-lg-7 col-md-7 col-sm-12">Thông tin sản phẩm</div>
     <div class="cart-nav-item col-lg-2 col-md-2 col-sm-12">Tùy chọn</div>

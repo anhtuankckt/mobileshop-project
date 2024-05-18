@@ -261,11 +261,13 @@ const addToCart = async (req, res) => {
 const cart = async (req, res) => {
   const items = req.session.cart
   const totalPriceCart = items.reduce((total, item) => total + item.price * item.qty, 0)
+  const { error } = req.query
 
   res.render('site/cart', {
     items,
     vndPrice,
-    totalPriceCart
+    totalPriceCart,
+    error
   })
 }
 
@@ -304,6 +306,7 @@ const order = async (req, res) => {
 
   if (customer && items.length > 0) {
     newOrder.customer_id = customer._id
+
     newOrder.items = items.map((item) => ({
       prd_id: item.id,
       price: item.price,
@@ -315,6 +318,18 @@ const order = async (req, res) => {
     name: customer.username,
     phone: customer.phone,
     add: customer.address
+  }
+
+  for (let item of newOrder.items) {
+    const product = await productModel.findById(item.prd_id)
+    if (product) {
+      if (item.qty > product.store) {
+        const error = 'Số lượng sản phẩm trong kho không đủ!'
+        return res.redirect(`/cart?error=${error}`)
+      }
+      product.store -= item.qty
+      await product.save()
+    }
   }
 
   const viewFolder = req.app.get('views')

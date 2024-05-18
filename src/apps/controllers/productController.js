@@ -57,8 +57,7 @@ const store = async (req, res) => {
   const { body } = req
   const { thumbnails } = req.files
   const categories = await categoryModel.find({ is_delete: false }).populate('cat_parrent')
-  console.log('body.promotion', body.promotion)
-  console.log('body.description', body.description)
+
   if (!body.cat_id) {
     const error = 'Chưa có danh mục cấp 3. Hãy tạo mới trước khi thêm sản phẩm !'
     return res.render('admin/products/add_product', { categories, data: { error } })
@@ -75,7 +74,8 @@ const store = async (req, res) => {
     cat_id: body.cat_id,
     status: body.status,
     featured: body.featured == "on",
-    is_stock: body.is_stock == "1",
+    store: Number(body.store),
+    is_stock: body.store > 0,
     warranty: body.warranty,
     accessories: body.accessories,
     promotion: body.promotion,
@@ -168,7 +168,8 @@ const update = async (req, res) => {
     cat_id: body.cat_id,
     status: body.status,
     featured: body.featured == "on",
-    is_stock: body.is_stock == "1",
+    store: Number(body.store),
+    is_stock: body.store > 0,
     warranty: body.warranty,
     accessories: body.accessories,
     promotion: body.promotion,

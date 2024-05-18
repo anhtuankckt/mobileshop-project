@@ -89,12 +89,10 @@
               </div>
 
               <div class="form-group">
-                <label>Trạng thái</label>
-                <select name="is_stock" class="form-control">
-                  <option <%=product?.is_stock == true && "selected"%> value=1>Còn hàng</option>
-                  <option <%=product?.is_stock == false && "selected"%> value=0>Hết hàng</option>
-                </select>
+                <label>Kho (số lượng)</label>
+                <input required name="store" type="number" class="form-control" min="0" value="<%=product?.store%>">
               </div>
+
               <%if (data && data.error) { %>
               <div class="form-group">
                 <label class="btn btn-danger"><%=data.error%></label>

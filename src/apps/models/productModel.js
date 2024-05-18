@@ -52,12 +52,30 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    store: {
+      type: Number,
+      default: 0
+    },
     is_delete: {
       type: Boolean,
       default: false
     }
   }, { timestamps: true }
 )
+
+productSchema.pre('save', async function (next) {
+  try {
+    if (this.isModified('store')) {
+      if (this.store > 0) {
+        this.is_stock = true
+      } else {
+        this.is_stock = false
+      }
+    }
+  } catch (error) {
+    next(error)
+  }
+})
 
 const productModel = mongoose.model("Product", productSchema, "products")
 

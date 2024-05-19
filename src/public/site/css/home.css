@@ -7,7 +7,7 @@
 }
 
 body {
-	background: #ffbe76;
+	background: #E7ECF4;
 }
 
 #header {
@@ -234,13 +234,13 @@ body {
 }
 
 #footer-bottom {
-	background: #ffbe76;
+	background: #E7ECF4;
 	padding: 10px 0;
 }
 
 #footer-bottom p {
 	margin: 0;
-	color: #fff;
+	color: #333;
 }
 
 
